@@ -4,6 +4,7 @@ import cors from '@fastify/cors';
 import Fastify from 'fastify';
 import { Pool } from 'pg';
 import { z } from 'zod';
+import { registerMcpRoutes } from './mcp.js';
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -74,6 +75,8 @@ app.post('/api/projects', async (request, reply) => {
   reply.code(201);
   return { project: rows[0] };
 });
+
+registerMcpRoutes(app, pool);
 
 app.addHook('onClose', async () => {
   await pool.end();

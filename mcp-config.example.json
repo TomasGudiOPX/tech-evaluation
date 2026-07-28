@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "vps-template": {
+      "type": "streamable-http",
+      "url": "https://app.example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer REPLACE_WITH_MCP_API_TOKEN"
+      }
+    }
+  }
+}

@@ -22,6 +22,36 @@ browser -> Nginx -> React frontend
 
 This is inspired by the practical part of larger self-hosted projects such as Twenty: keep services containerized, persist data in PostgreSQL, and expose a single entry point. It intentionally does not include Redis, workers, queues, GraphQL, or a large monorepo.
 
+## Optional MCP Connection
+
+The template can expose a Model Context Protocol (MCP) endpoint for tools such as Claude Desktop, Cursor, or other compatible clients. It follows the same broad approach as Twenty: a streamable HTTP endpoint, a bearer token, and narrowly defined application tools.
+
+MCP is disabled by default. Enable it by setting a long, unique `MCP_API_TOKEN` in the project's `.env`:
+
+```dotenv
+MCP_API_TOKEN=replace-with-a-long-random-secret
+```
+
+After rebuilding the stack, copy `mcp-config.example.json` into your MCP client's configuration and replace both values:
+
+```json
+{
+  "mcpServers": {
+    "my-client-app": {
+      "type": "streamable-http",
+      "url": "https://app.example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer replace-with-the-same-secret"
+      }
+    }
+  }
+}
+```
+
+The starter tools are `list_projects` and `create_project`. They demonstrate how MCP tools should be small, named for a client capability, and validated before they write data. Replace them with client-specific tools in `backend/src/mcp.ts`.
+
+Treat the MCP token like a password. Do not place it in the frontend, source code, screenshots, or public documentation. Leaving `MCP_API_TOKEN` blank returns `404` for `/mcp`, keeping the feature off.
+
 ## Before You Start
 
 You need:

@@ -4,6 +4,8 @@ This is a small starting point for client projects that need a React frontend, a
 
 Read [VPS-DOC.md](VPS-DOC.md) for the human deployment and usage guide. Coding agents should follow [AGENT.md](AGENT.md).
 
+An optional bearer-token-protected MCP endpoint is documented in [VPS-DOC.md](VPS-DOC.md#optional-mcp-connection). Its client configuration starter is [mcp-config.example.json](mcp-config.example.json).
+
 It borrows Twenty's useful production pattern: containerize the application, keep state in PostgreSQL, and expose one public HTTP entry point. It leaves out the monorepo, worker, Redis, GraphQL, and CRM-specific modules that a small project does not need on day one.
 
 ## Structure
