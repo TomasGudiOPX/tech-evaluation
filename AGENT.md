@@ -4,7 +4,7 @@
 
 `vps1-test` is a deliberately small, self-hosted application template for client work. It provides a React frontend, a Node API, PostgreSQL, and one public HTTP entry point. Optimize for a simple single-VPS deployment, understandable ownership, and a small operational footprint.
 
-Do not turn this into a copy of Twenty. Twenty informed the container topology, not the application's feature set or monorepo structure.
+Do not turn this into a large platform clone. The template keeps the container topology small and leaves out product-specific modules, workers, and monorepo complexity until a client requirement justifies them.
 
 ## Architecture
 

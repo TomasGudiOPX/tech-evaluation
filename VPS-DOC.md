@@ -20,11 +20,11 @@ browser -> Nginx -> React frontend
                 -> Fastify API -> PostgreSQL data volume
 ```
 
-This is inspired by the practical part of larger self-hosted projects such as Twenty: keep services containerized, persist data in PostgreSQL, and expose a single entry point. It intentionally does not include Redis, workers, queues, GraphQL, or a large monorepo.
+This keeps the practical part of larger self-hosted applications: services are containerized, data persists in PostgreSQL, and the stack exposes a single entry point. It intentionally does not include Redis, workers, queues, GraphQL, or a large monorepo.
 
 ## Optional MCP Connection
 
-The template can expose a Model Context Protocol (MCP) endpoint for tools such as Claude Desktop, Cursor, or other compatible clients. It follows the same broad approach as Twenty: a streamable HTTP endpoint, a bearer token, and narrowly defined application tools.
+The template can expose a Model Context Protocol (MCP) endpoint for tools such as Claude Desktop, Cursor, or other compatible clients. It uses a streamable HTTP-style endpoint, a bearer token, and narrowly defined application tools.
 
 MCP is disabled by default. Enable it by setting a long, unique `MCP_API_TOKEN` in the project's `.env`:
 
