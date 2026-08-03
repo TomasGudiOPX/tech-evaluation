@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { CartModule } from './modules/cart/cart.module.js';
 import { OrderModule } from './modules/orders/order.module.js';
@@ -28,6 +29,14 @@ export async function createApp(config: AppConfig): Promise<NestFastifyApplicati
 
   app.enableCors({ origin: config.corsOrigin });
   app.useGlobalFilters(new AppExceptionFilter());
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Shopping Cart API')
+    .setDescription('REST API for catalog, authentication, cart, checkout, orders, and product administration.')
+    .setVersion('1.0.0')
+    .addBearerAuth()
+    .build();
+  SwaggerModule.setup('api/docs', app, SwaggerModule.createDocument(app, swaggerConfig));
 
   return app;
 }

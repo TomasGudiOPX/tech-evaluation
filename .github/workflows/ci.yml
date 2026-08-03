@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install
+        run: yarn install --immutable
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Build contracts
+        run: yarn workspace @vps-template/contracts build
+
+      - name: Generate Prisma client
+        run: yarn workspace @vps-template/api prisma:generate
+
+      - name: Build API
+        run: yarn workspace @vps-template/api build
+
+      - name: Test API
+        run: yarn workspace @vps-template/api test
+
+      - name: Build web
+        run: yarn workspace @vps-template/web build
+
+      - name: Build workspace
+        run: yarn build

@@ -10,6 +10,8 @@
   "scripts": {
     "build": "yarn workspaces foreach -A -t run build",
     "build:api": "yarn workspace @vps-template/api build",
-    "build:web": "yarn workspace @vps-template/web build"
+    "build:web": "yarn workspace @vps-template/web build",
+    "lint": "yarn workspaces foreach -A -t run lint",
+    "test": "yarn workspace @vps-template/api test"
   }
 }

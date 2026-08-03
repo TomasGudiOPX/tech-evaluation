@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This template is for small client applications that need a predictable, low-cost starting point. It favors a modular monolith on one VPS over early microservices or several managed platforms.
+This shopping-cart evaluation favors a small modular monolith on one VPS over early microservices or several managed platforms. The design goal is traceable commerce behavior with a small operating footprint.
 
 ## System Shape
 
@@ -12,54 +12,56 @@ internet -> host TLS proxy -> environment proxy -> web or API -> PostgreSQL
 
 Each deployed environment is one Docker Compose project with four containers:
 
-| Service | Responsibility                                | Host exposure     |
-| ------- | --------------------------------------------- | ----------------- |
-| `proxy` | Routes browser, API, health, and MCP requests | One loopback port |
-| `web`   | Serves the built React application            | Internal only     |
-| `api`   | Runs the Fastify application                  | Internal only     |
-| `db`    | Stores PostgreSQL data in a named volume      | Internal only     |
-
-The host TLS proxy, normally Caddy, is the only public entry point. It maps a domain to each environment proxy's loopback port.
+| Service | Responsibility | Host exposure |
+| --- | --- | --- |
+| `proxy` | Routes browser, API, API docs, and health requests | One loopback port |
+| `web` | Serves the built Vite React application | Internal only |
+| `api` | Runs the NestJS application | Internal only |
+| `db` | Stores PostgreSQL data in a named volume | Internal only |
 
 ## Source Boundaries
 
 ```text
 apps/
-  api/                 Application server
-    src/platform/      Configuration and database setup
-    src/engine/        Cross-cutting capabilities such as MCP
-    src/modules/       Client business features
-  web/                 Browser application
+  api/                 NestJS modular monolith
+    prisma/            Schema, migrations, and seed
+    src/platform/      Configuration, Prisma, and shared app infrastructure
+    src/modules/       Auth, products, cart, and orders
+  web/                 Vite React storefront
 packages/
-  contracts/           Shared request schemas and API types
-docs/                  Human-facing operating and design documentation
+  contracts/           Shared Zod schemas and API types
+docs/                  Operating, design, and evidence documentation
 openspec/              Accepted specifications and planned changes
 ```
 
-`apps/api` is a modular monolith. A business feature belongs in `src/modules/<feature>` and owns its route, service, repository, and feature-specific behavior. Cross-cutting capabilities belong in `src/engine`; they must call module services rather than bypass them with separate database logic.
+Business behavior belongs in `src/modules/<feature>`. A feature owns its controller, service, repository, and feature-specific validation through shared contracts where useful. Cross-cutting infrastructure stays in `src/platform`.
 
-`packages/contracts` is deliberately small. Add only schemas and types used by both applications. Do not create packages merely to imitate a larger monorepo.
+## Commerce Decisions
+
+| Decision | Reason | Consequence |
+| --- | --- | --- |
+| Public catalog, admin writes | Keeps shopping flow open while protecting inventory changes | Admin routes require JWT and `admin` role |
+| Logical product retirement | Preserves history and avoids broken order snapshots | Retired products are hidden from public catalog and rejected at checkout |
+| Authenticated cart only | Avoids guest-cart merge complexity | Cart and checkout require login |
+| Simulated checkout | Meets evaluation scope without payment-provider risk | No external payment call is made |
+| Idempotent checkout key | Supports retry-safe order creation | Reusing a key for a changed cart returns a domain error |
+| Prisma migrations | Makes data changes reviewable and repeatable | Schema changes require versioned migration files |
+
+## UI Direction
+
+The Stitch minimalist retail showcase is a reference model, not canonical content. The UI adapts its calm retail hierarchy, product-first imagery, restrained spacing, and minimal controls to this project while keeping this app's actual products, endpoints, and evaluation scope.
 
 ## Infrastructure Decisions
 
-| Decision                                          | Reason                                                 | Consequence                                                   |
-| ------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------- |
-| Docker Compose on one VPS                         | Predictable cost and simple handover                   | Capacity is finite; monitor disk, memory, and backups         |
-| PostgreSQL only                                   | One durable datastore for normal client workflows      | Add Redis, queues, or object storage only for a concrete need |
-| One public entry point                            | Smaller attack surface and simpler routing             | API and database ports stay internal                          |
-| Loopback-bound environment port                   | The TLS proxy controls public access                   | Every environment needs a unique `HTTP_PORT`                  |
-| Local development plus VPS staging and production | Avoids one remote stack per developer                  | Staging is a shared integration environment                   |
-| Yarn 4 workspace                                  | One lockfile and a small shared-contract boundary      | Developers use Corepack and `yarn install --immutable`        |
-| Optional MCP in the API                           | AI tools remain close to validated business operations | MCP stays disabled without `MCP_API_TOKEN`                    |
-
-## Environment Decisions
-
-Development runs on developer machines. Staging and production run as separate Compose projects, each with its own checkout, `.env`, Compose name, database credentials, volume, backup routine, port, and domain.
-
-Staging must never reuse production credentials or connect to the production database. If it needs representative data, use a sanitized copy.
-
-The default Bitbucket branch model is documented in [ENVIRONMENTS.md](ENVIRONMENTS.md). It is intentionally limited to `develop` for staging and `main` for production. More environments require a clear business reason and a cleanup plan.
+| Decision | Reason | Consequence |
+| --- | --- | --- |
+| Docker Compose on one VPS | Predictable cost and simple handover | Capacity is finite; monitor disk, memory, and backups |
+| PostgreSQL only | One durable datastore for normal commerce workflows | Add Redis, queues, or object storage only for a concrete need |
+| One public entry point | Smaller attack surface and simpler routing | API and database ports stay internal |
+| Loopback-bound environment port | The TLS proxy controls public access | Every environment needs a unique `HTTP_PORT` |
+| GitHub `develop`/`main` flow | Simple review path for staging and production | CI must pass before merge |
+| Yarn 4 workspace | One lockfile and a shared contract boundary | Developers use Corepack and `yarn install --immutable` |
 
 ## Change Control
 
-Use `openspec/changes/` for planned behavior or operational changes. After implementation, update the relevant OpenSpec specification and this document when a decision changes. Update the human operating guide when commands, variables, ports, backups, or deployment steps change.
+Use `openspec/changes/` for planned behavior or operational changes. After implementation, update the relevant spec, docs, vault evidence, and `INFORME_IA.md`.

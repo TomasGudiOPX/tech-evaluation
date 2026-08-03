@@ -42,6 +42,7 @@ The source checks for the evaluation project are:
 
 ```powershell
 yarn workspace @vps-template/contracts build
+yarn lint
 yarn workspace @vps-template/api build
 yarn workspace @vps-template/api test
 yarn workspace @vps-template/web build
@@ -86,6 +87,8 @@ Current migration-backed modules:
 
 - `auth`: owns `User` and `UserRole`.
 - `products`: owns `Product`; product removal is logical retirement through `isActive=false`, not hard deletion.
+- `cart`: owns `Cart` and `CartItem` for authenticated customers.
+- `orders`: owns `Order`, `OrderItem`, and checkout idempotency records.
 
 Seed data lives in `apps/api/prisma/seed.ts`. The product seed is deterministic and inserts only when the product table is empty.
 
@@ -107,29 +110,33 @@ Instructions help an agent use tools correctly, but they are not a security boun
 
 ## Quality Gates
 
-The project currently enforces dependency reproducibility, compilation, and API tests through:
+The project currently enforces dependency reproducibility, type checks, compilation, Prisma generation, API tests, and frontend build output through local commands and GitHub Actions:
 
 ```powershell
 yarn install --immutable
+yarn lint
+yarn workspace @vps-template/contracts build
 yarn workspace @vps-template/api prisma:generate
+yarn workspace @vps-template/api build
 yarn workspace @vps-template/api test
+yarn workspace @vps-template/web build
 yarn build
 ```
 
 In restricted Windows/sandboxed environments, Vitest, Vite, and Yarn workspace orchestration may fail with `spawn EPERM` when helper processes are blocked. Treat that as an environment permission failure, then rerun the same commands in a normal terminal or approved execution context before recording the result.
 
-Add these gates as the project gains production behavior:
+Add these gates as the project grows beyond the evaluation scope:
 
 | Trigger | Required addition |
 | --- | --- |
 | First non-trivial feature | Module tests for the service and route behavior |
 | First schema change | Migration runner and migration test |
-| More than one developer | Lint and formatting checks in GitHub Actions |
+| More than one developer | ESLint, Prettier, and stricter formatting checks |
 | First external integration | Contract test, timeout, retry policy, and failure-path test |
 | First MCP write tool | Scoped credentials, audit log, and policy test |
 | First sensitive client data | Authentication, authorization, backups, and restore test |
 
-Keep checks as root Yarn scripts so developers, GitHub Actions, and future deployment automation run the same commands.
+Keep checks as root Yarn scripts so developers, GitHub Actions, and future deployment automation run the same commands. Current CI lives in `.github/workflows/ci.yml` and runs on pushes and pull requests to `develop` and `main`.
 
 ## GitHub Branches and Pull Requests
 
@@ -165,7 +172,7 @@ docker compose ps
 docker compose logs --tail 100 api
 ```
 
-Verify the final domain, `/health`, the client workflow, and MCP `tools/list` when MCP is enabled. Record the deployed commit with `git rev-parse HEAD`.
+Verify the final domain, `/health`, `/api/docs`, catalog browsing, login/register, cart mutation, checkout, order history, and admin product management. Record the deployed commit with `git rev-parse HEAD`.
 
 ## Definition of Done
 
@@ -179,3 +186,7 @@ Before considering a change complete:
 - The GitHub pull request is reviewed and merged into the correct branch.
 - Staging has been verified before production deployment.
 - Production deployment and the deployed commit are recorded.
+
+## UI/UX Reference
+
+The Stitch minimalist retail showcase is a design reference, not a source of truth. Use it to model the tone of the storefront: product-first imagery, quiet typography, restrained controls, and clear shopping tasks. Do not copy Aura-specific copy, products, routes, or assumptions when they conflict with this project's contracts or evaluation scope.

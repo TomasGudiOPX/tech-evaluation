@@ -44,3 +44,16 @@ Este registro alimenta `INFORME_IA.md`. No registrar actividad que no haya ocurr
 - **Motivo tecnico:** El flujo evaluable necesita trazabilidad y consistencia antes que integraciones externas.
 - **Prueba asociada:** Cart service, checkout repository/service, idempotencia, stock insuficiente, ultima unidad concurrente e historial por usuario.
 - **Enlaces:** [[03 Evidencia/Evidencia - Checkout y Ordenes]], `openspec/changes/add-cart-checkout-orders`.
+
+## AI-2026-08-03-05 - Docs CI y polish final
+
+- **Vertical / requisito:** FR-01, FR-02, FR-03, FR-04, FR-05, FR-06, FR-07, NFR-01, NFR-02, NFR-03, AI-01, AI-02, AI-03.
+- **Herramienta o agente:** Codex con `$openspec-explore`, `$openspec-propose` y `$openspec-apply-change`.
+- **Objetivo:** Cerrar la entrega con UI retail, Swagger, CI, limpieza de starter code y documentacion consistente.
+- **Prompt resumido o enlace:** El usuario pidio continuar con la fase "docs + CI + code polish", eligio mantener Vite + React y aclaro que `stitch_minimalist_retail_showcase` es referencia adaptativa, no fuente de verdad.
+- **Salida recibida:** Cambio `openspec/changes/finalize-delivery-docs-ci-polish`, storefront Vite actualizado, Swagger en `/api/docs`, workflow `.github/workflows/ci.yml` y docs de entrega.
+- **Revision humana:** Pendiente de revision final por el usuario despues de pruebas.
+- **Correccion o rechazo:** Se rechazo copiar Aura Commerce literalmente; se adapto la direccion visual al dominio real del proyecto.
+- **Motivo tecnico:** Migrar a Next.js en esta fase aumentaria riesgo sin mejorar los requisitos ya implementados.
+- **Prueba asociada:** Lint, builds de contratos/API/web, Prisma generate, tests API, build raiz y validacion Compose.
+- **Enlaces:** [[03 Evidencia/Evidencia - Entrega Final]], `openspec/changes/finalize-delivery-docs-ci-polish`.
