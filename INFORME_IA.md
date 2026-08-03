@@ -5,6 +5,8 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 ## Herramientas usadas
 
 - Codex: exploracion inicial, creacion de artefactos OpenSpec, bootstrap del vault y primera implementacion de identidad/RBAC.
+- Corepack/Yarn: instalacion reproducible de workspaces y ejecucion de Prisma, tests y builds.
+- Prisma: generacion de cliente y migraciones versionadas para usuarios y productos.
 
 ## Especificacion previa
 
@@ -19,6 +21,7 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 - **Objetivo:** crear el primer cambio OpenSpec antes de implementar codigo.
 - **Resultado:** se creo `openspec/changes/add-identity-rbac` y la evidencia inicial.
 - **Revision/correccion humana:** se detecto que el vault inicial estaba fuera del Git root entregable; se corrigio a `docs/obsidian-vault/`.
+- **Commit asociado:** `d64c54c feat(auth): add identity RBAC baseline for FR-03 FR-06 AI-01`.
 
 ### AI-2026-08-03-02 - Decision de stack
 
@@ -27,6 +30,7 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 - **Decision humana:** seguir el stack sugerido: Next.js, NestJS, PostgreSQL y Prisma.
 - **Resultado:** README, ADR y OpenSpec documentan que el reemplazo del template es intencional.
 - **Correccion/rechazo:** se rechazo implementar auth sobre Fastify/raw pg porque desviaria el proyecto del stack elegido para la evaluacion.
+- **Commit asociado:** `d64c54c feat(auth): add identity RBAC baseline for FR-03 FR-06 AI-01`.
 
 ### AI-2026-08-03-03 - Catalogo publico y administracion de productos
 
@@ -35,6 +39,8 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 - **Decision humana:** separar catalogo/admin de carrito/checkout para mantener una vertical verificable y trazable.
 - **Resultado:** `openspec/changes/add-product-catalog-admin` define e implementa catalogo, detalle, create/update/retire y seed deterministico.
 - **Correccion/rechazo:** se excluyeron hard delete, uploads, filtros y checkout para proteger el alcance del slice.
+- **Verificacion:** `prisma:generate`, build de contracts, build de API, 17 tests de API, build de web y build general.
+- **Commit asociado:** `8ed12d2 feat(products): add catalog admin for FR-01 FR-07 FR-06`.
 
 ## Correcciones o rechazos relevantes
 
@@ -46,3 +52,16 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 ## Estado
 
 Catalogo/admin quedo verificado con Prisma generate, build de contracts/API, 17 tests de API y build general. Pendiente completar las siguientes verticales, commits descriptivos finales y reflexion final.
+
+## Comandos de verificacion usados
+
+```powershell
+corepack yarn workspace @vps-template/api prisma:generate
+corepack yarn workspace @vps-template/contracts build
+corepack yarn workspace @vps-template/api build
+corepack yarn workspace @vps-template/api test
+corepack yarn workspace @vps-template/web build
+corepack yarn build
+```
+
+En el entorno del agente, Vitest/Vite necesitaron ejecucion con permisos elevados porque la sandbox bloqueaba procesos auxiliares con `spawn EPERM`. No se cambio el codigo para ocultar ese problema; se verifico el mismo comando fuera de esa restriccion.
