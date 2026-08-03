@@ -70,3 +70,16 @@ Este registro alimenta `INFORME_IA.md`. No registrar actividad que no haya ocurr
 - **Motivo tecnico:** Las migraciones deben ejecutarse antes del seed y sin depender del host `DATABASE_URL` contra el `db` interno de Compose.
 - **Prueba asociada:** Compose config, build raiz, build Docker del target `api-tools`, build Docker runtime API, `/health`, `/api/products` y `/api/docs`.
 - **Enlaces:** [[03 Evidencia/Evidencia - Entrega Final]], [[04 Gestion/Registro de Decisiones]].
+
+## AI-2026-08-03-07 - QA implementation con skills locales
+
+- **Vertical / requisito:** FR-02, FR-03, FR-04, FR-05, FR-06, FR-07, NFR-02, AI-03.
+- **Herramienta o agente:** Codex usando las skills locales `qa-smoke`, `qa-backend-full-test` y `qa-front-playwright-test` desde `software-development-qa-skills`.
+- **Objetivo:** Crear una rama separada `QA-Implementation` con evidencia QA reproducible y documentada.
+- **Prompt resumido o enlace:** El usuario pidio continuar la implementacion QA y luego corrigio que debian usarse las skills locales de `C:\Users\tomas\OneDrive\Documents\workspace\tech-evaluation\software-development-qa-skills`.
+- **Salida recibida:** Smoke Node sin dependencias, run contracts, matriz backend, analisis de gaps, planes manuales y resumenes de evidencia bajo `tests/`.
+- **Revision humana:** El usuario autorizo commit y push al terminar el proceso QA.
+- **Correccion o rechazo:** Se omitio TestSprite porque las skills locales lo limitan a solicitud explicita o artefactos previos en alcance. Se corrigio el `Content-Type` de checkout sin body antes de cerrar el smoke.
+- **Motivo tecnico:** La evidencia QA queda separada de los tests unitarios y cubre el recorrido real que evaluaria un usuario: health, catalogo, auth, RBAC, carrito, checkout idempotente e historial.
+- **Prueba asociada:** `yarn workspace @vps-template/api test` OK: 8 archivos, 29 tests. `yarn node tests/qa-commerce-smoke.mjs` OK: 12 checks.
+- **Enlaces:** [[03 Evidencia/Evidencia - QA Implementation]], `tests/qa-commerce-smoke.mjs`, commit `cf69941`.

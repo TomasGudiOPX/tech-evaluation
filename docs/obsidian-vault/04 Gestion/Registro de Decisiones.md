@@ -23,3 +23,9 @@ tags: [adr, decisiones]
 ## ADR-005 - Entornos por configuracion y perfil operativo
 
 **Aprobado.** No se crean perfiles Docker `dev`, `qa` o `prod` porque staging y produccion se separan por checkout, branch, `.env`, `COMPOSE_PROJECT_NAME`, puertos, base de datos, credenciales y dominio. Compose mantiene solo el perfil `ops` para tareas puntuales `migrate` y `seed`, ejecutadas antes de levantar el stack persistente.
+
+## ADR-006 - QA implementation en rama separada
+
+**Aprobado.** La QA implementation se mantiene en `QA-Implementation` para aislar evidencia, contratos de prueba y smoke reproducible de los cambios funcionales principales. La razon es que los artefactos QA agregan trazabilidad y repetibilidad, pero no deben reabrir el alcance del producto ni mezclar planes de prueba con refactors de UI.
+
+Se usaron las skills locales `qa-smoke`, `qa-backend-full-test` y `qa-front-playwright-test` como guias. Se rechazo TestSprite porque las instrucciones locales lo reservan para pedido explicito o evidencia TestSprite existente.

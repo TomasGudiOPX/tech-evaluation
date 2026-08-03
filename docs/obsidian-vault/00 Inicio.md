@@ -14,6 +14,7 @@ Base de conocimiento y trazabilidad para la evaluacion tecnica.
 - [[01 Requisitos/Mapa de Requisitos|Mapa de requisitos]]
 - [[02 Arquitectura/Arquitectura General|Arquitectura general]]
 - [[03 Evidencia/Registro de Evidencia IA|Registro de evidencia IA]]
+- [[03 Evidencia/Evidencia - QA Implementation|Evidencia QA Implementation]]
 - [[04 Gestion/Plan de Entrega|Plan de entrega]]
 - [[04 Gestion/Registro de Decisiones|Registro de decisiones]]
 
@@ -24,6 +25,7 @@ Base de conocimiento y trazabilidad para la evaluacion tecnica.
 - Registrar uso de IA, revision humana y correcciones concretas.
 - Proteger identidad, stock y checkout con pruebas.
 - Mantener entornos reproducibles: migrar antes de seed y separar staging/produccion por configuracion, no por perfiles Docker ficticios.
+- Separar QA exploratoria/contractual de la implementacion principal cuando agrega evidencia nueva sin cambiar el alcance funcional.
 
 ## Flujo
 

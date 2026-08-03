@@ -71,6 +71,17 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 - **Correccion/rechazo:** se rechazo presentar `docker compose up` + `yarn seed` como suficiente porque no aplica migraciones y no conecta limpiamente contra el `db` interno de Compose.
 - **Verificacion:** Docker health OK, catalogo seed OK, Swagger OK y build raiz OK despues de corregir arranque/runtime.
 
+### AI-2026-08-03-07 - QA implementation branch y habilidades QA locales
+
+- **Contexto:** la entrega ya tenia pruebas backend y arranque Docker verificado, pero faltaba una rama separada de QA con artefactos explicitos producidos desde el directorio local `software-development-qa-skills`.
+- **Objetivo:** crear una rama `QA-Implementation`, aplicar las habilidades locales de QA relevantes y dejar evidencia ejecutable/revisable del smoke y de los planes de prueba.
+- **Decision humana:** usar `qa-smoke`, `qa-backend-full-test` y `qa-front-playwright-test` como guias; no usar TestSprite porque las skills locales indican hacerlo solo si se solicita explicitamente o si ya existen artefactos TestSprite en alcance.
+- **Resultado:** se agrego `tests/qa-commerce-smoke.mjs` y documentacion QA en `tests/casos-de-prueba-backend/cart-checkout-orders/` y `tests/casos-de-prueba/cart-checkout-orders/`.
+- **Correccion/rechazo:** durante el smoke se detecto que el cliente web enviaba `Content-Type: application/json` en un checkout sin body; eso provocaba `400` en Fastify. Se corrigio para setear JSON solo cuando existe `options.body`.
+- **Motivo tecnico:** la QA separada preserva trazabilidad de lo probado, evita mezclar evidencia manual con pruebas unitarias y cubre el flujo evaluador real: health, catalogo, auth, RBAC, carrito, checkout idempotente, carrito vacio e historial.
+- **Verificacion:** API tests OK: 8 archivos, 29 tests; smoke QA OK: 12 checks contra `http://127.0.0.1:18080`.
+- **Commit asociado:** `cf69941 Add QA implementation artifacts` en `QA-Implementation`.
+
 ## Correcciones o rechazos relevantes
 
 - No se acepto que el request de registro pueda enviar `role` o `isAdmin`; el servicio debe crear siempre `customer`.
@@ -81,10 +92,11 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 - No se acepto tratar el Stitch showcase como contenido canonico; solo guia UI/UX.
 - No se acepto migrar a Next.js al final porque no aporta al alcance verificado y aumenta riesgo.
 - No se acepto documentar perfiles Docker `dev`, `qa` o `prod` que no existen; el modelo real usa entornos por configuracion y un perfil operativo `ops` para migraciones/seed.
+- No se acepto usar TestSprite como sustituto de Playwright/smoke normal porque las skills locales lo reservan para una solicitud explicita o artefactos TestSprite existentes.
 
 ## Estado
 
-Catalogo/admin quedo verificado con Prisma generate, build de contracts/API, 17 tests de API y build general. Carrito/checkout/ordenes quedo verificado con Prisma generate, build de contracts/API, 29 tests de API, build web y build general. Docs/CI/polish quedo verificado con lint, builds, tests y Compose config. El arranque Docker local quedo verificado con `migrate`, `seed`, `up`, `/health`, `/api/products` y `/api/docs`.
+Catalogo/admin quedo verificado con Prisma generate, build de contracts/API, 17 tests de API y build general. Carrito/checkout/ordenes quedo verificado con Prisma generate, build de contracts/API, 29 tests de API, build web y build general. Docs/CI/polish quedo verificado con lint, builds, tests y Compose config. El arranque Docker local quedo verificado con `migrate`, `seed`, `up`, `/health`, `/api/products` y `/api/docs`. La rama `QA-Implementation` agrega evidencia QA separada, planes de prueba y un smoke ejecutable; quedo publicada en `origin/QA-Implementation`.
 
 ## Comandos de verificacion usados
 
@@ -100,6 +112,7 @@ docker compose --env-file .env.example config
 docker compose --env-file .env --profile ops run --rm --build migrate
 docker compose --env-file .env --profile ops run --rm seed
 docker compose --env-file .env up -d --build
+yarn node tests/qa-commerce-smoke.mjs
 ```
 
 En el entorno del agente, Vitest/Vite necesitaron ejecucion con permisos elevados porque la sandbox bloqueaba procesos auxiliares con `spawn EPERM`. No se cambio el codigo para ocultar ese problema; se verifico el mismo comando fuera de esa restriccion.
