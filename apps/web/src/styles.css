@@ -38,6 +38,49 @@
   --font-serif: 'Playfair Display', Georgia, serif;
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-bounce: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --header-bg: rgba(248, 246, 240, 0.9);
+  --focus-ring: rgba(27, 77, 62, 0.12);
+  --skeleton-from: #f0e9dd;
+  --skeleton-to: #e6decb;
+  --avatar-shadow: 0 2px 8px rgba(27, 77, 62, 0.3);
+}
+
+[data-theme='dark'] {
+  --bg-main: #121614;
+  --bg-surface: #1a201d;
+  --bg-surface-subtle: #232a26;
+  --bg-dark: #0d110f;
+  --bg-dark-hover: #1b211e;
+
+  --text-primary: #e9ece7;
+  --text-secondary: #a9b2ab;
+  --text-muted: #7d8680;
+  --text-on-dark: #ffffff;
+
+  --accent-primary: #2f7a63;
+  --accent-primary-hover: #3a8f76;
+  --accent-light: #1e352c;
+
+  --badge-success-bg: #0e3b2a;
+  --badge-success-text: #6ee7b7;
+  --badge-warning-bg: #3d2e0d;
+  --badge-warning-text: #fbbf24;
+  --badge-danger-bg: #3b1717;
+  --badge-danger-text: #fca5a5;
+
+  --border-subtle: #2b3330;
+  --border-strong: #3a443f;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.55), 0 4px 12px rgba(0, 0, 0, 0.4);
+
+  --header-bg: rgba(18, 22, 20, 0.9);
+  --focus-ring: rgba(75, 190, 156, 0.28);
+  --skeleton-from: #1f2623;
+  --skeleton-to: #2a322e;
+  --avatar-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -180,7 +223,7 @@ img {
   align-items: center;
   gap: 24px;
   padding: 14px clamp(16px, 4vw, 48px);
-  background: rgba(248, 246, 240, 0.9);
+  background: var(--header-bg);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-sm);
@@ -284,6 +327,21 @@ nav a.active {
   justify-content: flex-end;
 }
 
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.theme-toggle:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface-subtle);
+}
+
 .auth-trigger-btn {
   padding: 9px 18px;
   font-size: 0.88rem;
@@ -307,7 +365,7 @@ nav a.active {
   color: #ffffff;
   font-weight: 700;
   font-size: 0.85rem;
-  box-shadow: 0 2px 8px rgba(27, 77, 62, 0.3);
+  box-shadow: var(--avatar-shadow);
   transition: var(--transition-bounce);
 }
 
@@ -459,8 +517,8 @@ nav a.active {
 }
 
 .toast-success {
-  border-color: #a7f3d0;
-  color: #065f46;
+  border-color: var(--badge-success-bg);
+  color: var(--badge-success-text);
 }
 
 .toast-success .toast-icon {
@@ -468,8 +526,8 @@ nav a.active {
 }
 
 .toast-error {
-  border-color: #fecaca;
-  color: #991b1b;
+  border-color: var(--badge-danger-bg);
+  color: var(--badge-danger-text);
   animation:
     errorShake 0.4s ease-in-out,
     toastSlideIn 0.35s ease-out;
@@ -553,7 +611,7 @@ nav a.active {
 }
 
 .secondary-btn:hover:not(:disabled) {
-  background: #e5dec9;
+  background: var(--bg-surface-subtle);
   border-color: var(--border-strong);
   transform: translateY(-1px);
 }
@@ -723,7 +781,7 @@ nav a.active {
   outline: none;
   border-color: var(--accent-primary);
   background: var(--bg-surface);
-  box-shadow: 0 0 0 4px rgba(27, 77, 62, 0.12);
+  box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
 .submit-btn {
@@ -802,7 +860,7 @@ nav a.active {
 .search-box input:focus {
   outline: none;
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 4px rgba(27, 77, 62, 0.12);
+  box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
 .search-box input:focus + .search-icon {
@@ -854,7 +912,7 @@ nav a.active {
 .category-filter select:focus {
   outline: none;
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 4px rgba(27, 77, 62, 0.12);
+  box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
 .stock-filter-toggle {
@@ -1036,7 +1094,7 @@ nav a.active {
 .skeleton-image {
   width: 100%;
   height: 200px;
-  background: linear-gradient(90deg, #f0e9dd 25%, #e6decb 50%, #f0e9dd 75%);
+  background: linear-gradient(90deg, var(--skeleton-from) 25%, var(--skeleton-to) 50%, var(--skeleton-from) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -1045,7 +1103,7 @@ nav a.active {
   height: 16px;
   margin: 12px 20px;
   border-radius: 4px;
-  background: linear-gradient(90deg, #f0e9dd 25%, #e6decb 50%, #f0e9dd 75%);
+  background: linear-gradient(90deg, var(--skeleton-from) 25%, var(--skeleton-to) 50%, var(--skeleton-from) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -1707,6 +1765,15 @@ nav a.active {
 }
 
 .admin-topbar .ghost-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.admin-topbar .theme-toggle {
+  color: var(--text-on-dark);
+}
+
+.admin-topbar .theme-toggle:hover {
+  color: #ffffff;
   background: rgba(255, 255, 255, 0.12);
 }
 
