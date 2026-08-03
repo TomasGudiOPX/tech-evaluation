@@ -40,6 +40,12 @@ jobs:
       - name: Install
         run: yarn install --immutable
 
+      - name: Build contracts
+        run: yarn workspace @vps-template/contracts build
+
+      - name: Generate Prisma client
+        run: yarn workspace @vps-template/api prisma:generate
+
       - name: Lint
         run: yarn lint
 
@@ -48,12 +54,6 @@ jobs:
 
       - name: Format check
         run: yarn format:check
-
-      - name: Build contracts
-        run: yarn workspace @vps-template/contracts build
-
-      - name: Generate Prisma client
-        run: yarn workspace @vps-template/api prisma:generate
 
       - name: Build API
         run: yarn workspace @vps-template/api build
