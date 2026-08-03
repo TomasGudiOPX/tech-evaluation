@@ -60,7 +60,8 @@ function createPrisma(initialStock = 2) {
   const tx = {
     checkoutIdempotencyKey: {
       findUnique: async ({ where }: { where: { userId_key: { userId: string; key: string } } }) =>
-        idempotencyKeys.find((item) => item.userId === where.userId_key.userId && item.key === where.userId_key.key) ?? null,
+        idempotencyKeys.find((item) => item.userId === where.userId_key.userId && item.key === where.userId_key.key) ??
+        null,
       create: async ({ data }: { data: (typeof idempotencyKeys)[number] }) => {
         idempotencyKeys.push({ ...data, orderId: null });
       },
@@ -108,7 +109,11 @@ function createPrisma(initialStock = 2) {
       },
     },
     order: {
-      create: async ({ data }: { data: { userId: string; totalCents: number; items: { create: OrderItemCreate[] } } }) => {
+      create: async ({
+        data,
+      }: {
+        data: { userId: string; totalCents: number; items: { create: OrderItemCreate[] } };
+      }) => {
         const order = {
           id: `order-${orders.length + 1}`,
           userId: data.userId,
@@ -122,7 +127,8 @@ function createPrisma(initialStock = 2) {
       },
       findFirst: async ({ where }: { where: { id: string; userId: string } }) =>
         orders.find((order) => order.id === where.id && order.userId === where.userId) ?? null,
-      findMany: async ({ where }: { where: { userId: string } }) => orders.filter((order) => order.userId === where.userId),
+      findMany: async ({ where }: { where: { userId: string } }) =>
+        orders.filter((order) => order.userId === where.userId),
     },
   };
 

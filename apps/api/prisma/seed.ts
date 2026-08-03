@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 import { PrismaClient } from '@prisma/client';
 import type { UserRole } from '@vps-template/contracts/auth';
 import type { ProductCategory } from '@vps-template/contracts/products';

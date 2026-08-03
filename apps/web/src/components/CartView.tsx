@@ -20,13 +20,24 @@ export function CartView({ cart, setView, onUpdateQuantity, onRemoveItem, isBusy
         <div className="cart-main-panel">
           <div className="panel-header">
             <h1 className="panel-title">Shopping Cart</h1>
-            <span className="item-count-label">{items.length} {items.length === 1 ? 'item' : 'items'}</span>
+            <span className="item-count-label">
+              {items.length} {items.length === 1 ? 'item' : 'items'}
+            </span>
           </div>
 
           {isEmpty ? (
             <div className="empty-cart-state">
               <div className="empty-cart-icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="48"
+                  height="48"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
                   <line x1="3" y1="6" x2="21" y2="6" />
                   <path d="M16 10a4 4 0 0 1-8 0" />
@@ -82,7 +93,16 @@ export function CartView({ cart, setView, onUpdateQuantity, onRemoveItem, isBusy
                     type="button"
                     title="Remove item"
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <polyline points="3 6 5 6 21 6" />
                       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                     </svg>
@@ -126,7 +146,16 @@ export function CartView({ cart, setView, onUpdateQuantity, onRemoveItem, isBusy
               type="button"
             >
               <span>Proceed to Checkout</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
               </svg>

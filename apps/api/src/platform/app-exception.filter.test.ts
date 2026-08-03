@@ -66,7 +66,10 @@ describe('AppExceptionFilter', () => {
   it('preserves domain error envelopes', () => {
     const { host, response } = createHost();
 
-    new AppExceptionFilter().catch(new AppError(409, 'AUTH_EMAIL_ALREADY_REGISTERED', 'Email is already registered'), host as never);
+    new AppExceptionFilter().catch(
+      new AppError(409, 'AUTH_EMAIL_ALREADY_REGISTERED', 'Email is already registered'),
+      host as never,
+    );
 
     expect(response.status).toHaveBeenCalledWith(409);
     expect(response.status.mock.results[0].value.send).toHaveBeenCalledWith({

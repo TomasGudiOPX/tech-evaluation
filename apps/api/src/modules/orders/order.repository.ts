@@ -72,10 +72,15 @@ export class OrderRepository {
 
     if (existingKey?.orderId) {
       const currentItems = await this.cartItemsForCheckout(tx, userId);
-      const currentFingerprint = currentItems.length > 0 ? fingerprint(userId, currentItems) : existingKey.requestFingerprint;
+      const currentFingerprint =
+        currentItems.length > 0 ? fingerprint(userId, currentItems) : existingKey.requestFingerprint;
 
       if (currentFingerprint !== existingKey.requestFingerprint) {
-        throw new AppError(409, 'IDEMPOTENCY_KEY_REUSED', 'Idempotency key was reused for a different checkout request');
+        throw new AppError(
+          409,
+          'IDEMPOTENCY_KEY_REUSED',
+          'Idempotency key was reused for a different checkout request',
+        );
       }
 
       const order = await this.findOrder(tx, userId, existingKey.orderId);

@@ -52,7 +52,11 @@ describe('AuthService', () => {
 
     expect(result.user).toMatchObject({ email: 'user@example.com', role: 'customer' });
     expect(result.accessToken).toBe('token:1:customer');
-    expect(repository.create).toHaveBeenCalledWith('user@example.com', expect.not.stringContaining('correct-password'), 'customer');
+    expect(repository.create).toHaveBeenCalledWith(
+      'user@example.com',
+      expect.not.stringContaining('correct-password'),
+      'customer',
+    );
     await expect(bcrypt.compare('correct-password', repository.create.mock.calls[0][1])).resolves.toBe(true);
   });
 
@@ -71,9 +75,7 @@ describe('AuthService', () => {
 
   it('logs in with valid credentials', async () => {
     const passwordHash = await bcrypt.hash('correct-password', 12);
-    const { service } = createService([
-      { id: 'user-1', email: 'user@example.com', passwordHash, role: 'customer' },
-    ]);
+    const { service } = createService([{ id: 'user-1', email: 'user@example.com', passwordHash, role: 'customer' }]);
 
     await expect(
       service.login({
@@ -88,9 +90,7 @@ describe('AuthService', () => {
 
   it('returns the same stable error for unknown email and wrong password', async () => {
     const passwordHash = await bcrypt.hash('correct-password', 12);
-    const { service } = createService([
-      { id: 'user-1', email: 'user@example.com', passwordHash, role: 'customer' },
-    ]);
+    const { service } = createService([{ id: 'user-1', email: 'user@example.com', passwordHash, role: 'customer' }]);
 
     await expect(service.login({ email: 'missing@example.com', password: 'wrong' })).rejects.toMatchObject({
       code: 'AUTH_INVALID_CREDENTIALS',

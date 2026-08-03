@@ -132,13 +132,7 @@ export function AdminView({
           </div>
 
           <button className="primary-btn form-submit-btn" disabled={isBusy} type="submit">
-            {isBusy ? (
-              <span className="btn-spinner"></span>
-            ) : isEditing ? (
-              'Save Product Changes'
-            ) : (
-              'Create Product'
-            )}
+            {isBusy ? <span className="btn-spinner"></span> : isEditing ? 'Save Product Changes' : 'Create Product'}
           </button>
         </form>
 
@@ -159,16 +153,14 @@ export function AdminView({
                     <span className="admin-product-price">{money(product.priceCents)}</span>
                   </div>
 
-                  <span className={`stock-badge ${product.stock <= 0 ? 'badge-danger' : product.stock < 6 ? 'badge-warning' : 'badge-success'}`}>
+                  <span
+                    className={`stock-badge ${product.stock <= 0 ? 'badge-danger' : product.stock < 6 ? 'badge-warning' : 'badge-success'}`}
+                  >
                     {product.stock} in stock
                   </span>
 
                   <div className="admin-row-actions">
-                    <button
-                      className="ghost-btn edit-action"
-                      onClick={() => onStartEditing(product)}
-                      type="button"
-                    >
+                    <button className="ghost-btn edit-action" onClick={() => onStartEditing(product)} type="button">
                       Edit
                     </button>
                     <button

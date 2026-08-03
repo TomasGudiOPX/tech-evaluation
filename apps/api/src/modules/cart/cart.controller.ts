@@ -35,7 +35,9 @@ export class CartController {
 
   @Patch('items/:productId')
   @ApiOperation({ summary: 'Replace a cart item quantity' })
-  @ApiBody({ schema: { type: 'object', required: ['quantity'], properties: { quantity: { type: 'integer', minimum: 1 } } } })
+  @ApiBody({
+    schema: { type: 'object', required: ['quantity'], properties: { quantity: { type: 'integer', minimum: 1 } } },
+  })
   async updateItem(@Req() request: AuthenticatedRequest, @Param('productId') productId: string, @Body() body: unknown) {
     return { cart: await this.cart.updateItem(request.user!.id, productId, body) };
   }
