@@ -13,6 +13,7 @@ function product(id = productId, isActive = true, stock = 5) {
     id,
     name: 'Minimal Desk Lamp',
     description: 'Warm adjustable lamp for focused work sessions.',
+    category: 'workspace' as const,
     priceCents: 4599,
     imageUrl: 'https://example.com/lamp.jpg',
     stock,

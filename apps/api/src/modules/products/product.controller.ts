@@ -7,10 +7,11 @@ import { ProductService } from './product.service.js';
 
 const productBodySchema = {
   type: 'object',
-  required: ['name', 'description', 'priceCents', 'imageUrl', 'stock'],
+  required: ['name', 'description', 'category', 'priceCents', 'imageUrl', 'stock'],
   properties: {
     name: { type: 'string', maxLength: 120 },
     description: { type: 'string', maxLength: 1000 },
+    category: { type: 'string', enum: ['workspace', 'bags', 'kitchen', 'decor', 'wellness', 'travel'] },
     priceCents: { type: 'integer', minimum: 1 },
     imageUrl: { type: 'string', format: 'uri' },
     stock: { type: 'integer', minimum: 0 },

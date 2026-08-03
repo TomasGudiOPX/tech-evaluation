@@ -7,7 +7,7 @@ interface OrdersViewProps {
 
 export function OrdersView({ orders }: OrdersViewProps) {
   return (
-    <section className="orders-section">
+    <section className="orders-section view-transition">
       <div className="orders-header">
         <h1 className="panel-title">Order History</h1>
         <p className="orders-subtitle">View past transactions, item breakdowns, and order summaries.</p>
