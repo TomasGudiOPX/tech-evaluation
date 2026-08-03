@@ -1,12 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import type { Project } from '@vps-template/contracts/projects';
 import './styles.css';
-
-type Project = {
-  id: number;
-  name: string;
-  created_at: string;
-};
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api';
 

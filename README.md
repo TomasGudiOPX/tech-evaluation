@@ -2,11 +2,11 @@
 
 This is a small starting point for client projects that need a React frontend, a Node API, and PostgreSQL on one VPS.
 
-Read [VPS-DOC.md](VPS-DOC.md) for the human deployment and usage guide. Coding agents should follow [AGENT.md](AGENT.md).
+Read [docs/VPS-DOC.md](docs/VPS-DOC.md) for the human deployment and usage guide. [docs/README.md](docs/README.md) indexes the full documentation. Coding agents should follow [AGENT.md](AGENT.md).
 
-An optional bearer-token-protected MCP endpoint is documented in [VPS-DOC.md](VPS-DOC.md#optional-mcp-connection). Its client configuration starter is [mcp-config.example.json](mcp-config.example.json).
+An optional bearer-token-protected MCP endpoint is documented in [docs/VPS-DOC.md](docs/VPS-DOC.md#optional-mcp-connection). Its client configuration starter is [mcp-config.example.json](mcp-config.example.json).
 
-It borrows Twenty's useful production pattern: containerize the application, keep state in PostgreSQL, and expose one public HTTP entry point. It leaves out the monorepo, worker, Redis, GraphQL, and CRM-specific modules that a small project does not need on day one.
+It borrows Twenty's useful production pattern: containerize the application, keep state in PostgreSQL, and expose one public HTTP entry point. It keeps only a small Yarn workspace for shared contracts and leaves out the worker, Redis, GraphQL, and CRM-specific platform modules that a small project does not need on day one.
 
 ## Structure
 
@@ -17,10 +17,26 @@ browser -> nginx proxy -> React frontend
 
 | Path | Responsibility |
 | --- | --- |
-| `frontend/` | Vite + React single-page app, served as static files |
-| `backend/` | Fastify API with a database-backed example endpoint |
+| `apps/web/` | Vite + React single-page app, served as static files |
+| `apps/api/src/platform/` | Configuration and database connection setup |
+| `apps/api/src/modules/` | Client business features, beginning with `projects` |
+| `apps/api/src/engine/mcp/` | Optional MCP transport, authentication, instructions, and tools |
+| `packages/contracts/` | Shared API schemas and types for the frontend and backend |
+| `openspec/` | Accepted operational specifications and future change proposals |
 | `nginx/` | Routes `/` to the frontend and `/api` plus `/health` to the API |
 | `docker-compose.yml` | Starts the whole stack and persists PostgreSQL data |
+
+## Development tooling
+
+The repository uses Yarn 4 workspaces and commits `yarn.lock`. This gives every developer and Docker build the same dependency graph while keeping frontend, backend, and shared contracts separate.
+
+For source-only work, use Node 22 with Corepack:
+
+```powershell
+corepack enable
+yarn install --immutable
+yarn build
+```
 
 ## Run locally
 
@@ -35,8 +51,19 @@ The UI creates projects through `POST /api/projects`, so it verifies the proxy, 
 
 1. Copy this directory and rename the copy for the client.
 2. Change `COMPOSE_PROJECT_NAME`, `HTTP_PORT`, and the PostgreSQL credentials in the copied `.env`.
-3. Replace the example `projects` feature with the client domain model.
+3. Replace the example `projects` feature under `apps/api/src/modules/projects` with the client domain model.
 4. Add database migrations before the schema becomes more complex than this starter example.
+
+## Environments on One VPS
+
+Use one source tree per deployed environment, not separate frontend/backend codebases. A small client project normally needs production and staging; development runs locally.
+
+- Give each environment its own checkout or Git worktree, `.env`, Compose project name, database credentials, and port.
+- Keep `HTTP_BIND_ADDRESS=127.0.0.1` so only a host-level TLS proxy can reach each stack.
+- Route `app.example.com` to production and `staging.example.com` to staging through Caddy or another proxy.
+- Do not share a production database with staging or temporary previews.
+
+The Bitbucket branch and VPS deployment workflow is in [docs/ENVIRONMENTS.md](docs/ENVIRONMENTS.md). The accepted operational specification is in [openspec/specs/deployment-environments.md](openspec/specs/deployment-environments.md).
 
 ## VPS deployment notes
 

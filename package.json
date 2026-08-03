@@ -1,0 +1,15 @@
+{
+  "name": "vps-template",
+  "private": true,
+  "packageManager": "yarn@4.9.2",
+  "workspaces": [
+    "apps/api",
+    "apps/web",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "yarn workspaces foreach -A -t run build",
+    "build:api": "yarn workspace @vps-template/api build",
+    "build:web": "yarn workspace @vps-template/web build"
+  }
+}

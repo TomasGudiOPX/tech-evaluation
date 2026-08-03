@@ -6,12 +6,12 @@ This template is a small foundation for client applications that need a web fron
 
 It runs four containers on one VPS:
 
-| Container | Job | Publicly reachable? |
-| --- | --- | --- |
-| `proxy` | Nginx receives browser requests and routes them internally | Yes, on `HTTP_PORT` |
-| `frontend` | Serves the built React application | No |
-| `backend` | Runs the Fastify API | No |
-| `db` | Stores PostgreSQL data in a named Docker volume | No |
+| Container | Job                                                        | Publicly reachable? |
+| --------- | ---------------------------------------------------------- | ------------------- |
+| `proxy`   | Nginx receives browser requests and routes them internally | Yes, on `HTTP_PORT` |
+| `web`     | Serves the built React application                         | No                  |
+| `api`     | Runs the Fastify API                                       | No                  |
+| `db`      | Stores PostgreSQL data in a named Docker volume            | No                  |
 
 The browser requests the website from Nginx. Nginx sends normal website requests to the frontend and sends `/api/...` requests to the backend. The backend is the only service allowed to query PostgreSQL.
 
@@ -22,9 +22,11 @@ browser -> Nginx -> React frontend
 
 This keeps the practical part of larger self-hosted applications: services are containerized, data persists in PostgreSQL, and the stack exposes a single entry point. It intentionally does not include Redis, workers, queues, GraphQL, or a large monorepo.
 
+The code is a small modular monolith. `apps/api` keeps reusable platform code in `src/platform`, cross-cutting capabilities such as MCP in `src/engine`, and client business features in `src/modules`. `apps/web` contains the browser application. `packages/contracts` holds the small set of schemas and types shared with the frontend. These folders improve maintainability but do not create new services or consume extra VPS memory.
+
 ## Optional MCP Connection
 
-The template can expose a Model Context Protocol (MCP) endpoint for tools such as Claude Desktop, Cursor, or other compatible clients. It uses a streamable HTTP-style endpoint, a bearer token, and narrowly defined application tools.
+The template can expose a Model Context Protocol (MCP) endpoint for tools such as Claude Desktop, Cursor, or other compatible clients. It uses the official TypeScript SDK with a stateless Streamable HTTP endpoint, a bearer token, and narrowly defined application tools. MCP runs inside the existing backend container; it does not create another service.
 
 MCP is disabled by default. Enable it by setting a long, unique `MCP_API_TOKEN` in the project's `.env`:
 
@@ -48,7 +50,9 @@ After rebuilding the stack, copy `mcp-config.example.json` into your MCP client'
 }
 ```
 
-The starter tools are `list_projects` and `create_project`. They demonstrate how MCP tools should be small, named for a client capability, and validated before they write data. Replace them with client-specific tools in `backend/src/mcp.ts`.
+The starter tools are `list_projects` and `create_project`. They demonstrate how MCP tools should be small, named for a client capability, and validated before they write data. Replace them with client-specific tools in `apps/api/src/engine/mcp`, and make every tool call the matching business service under `apps/api/src/modules`.
+
+The MCP server sends instructions that limit reads and prohibit direct SQL, shell access, secrets, and arbitrary URLs. Keep those restrictions when adding tools. For destructive, bulk, or ambiguous changes, require confirmation in the client workflow before calling a write tool.
 
 Treat the MCP token like a password. Do not place it in the frontend, source code, screenshots, or public documentation. Leaving `MCP_API_TOKEN` blank returns `404` for `/mcp`, keeping the feature off.
 
@@ -61,6 +65,14 @@ You need:
 - SSH access to the VPS.
 
 For a small project, start with a VPS that has at least 1 GB of RAM. Use 2 GB or more when building images on the VPS, running additional services, or expecting steady traffic.
+
+For source-code development outside Docker, use Node 22 with Corepack. The repository pins Yarn 4 and commits `yarn.lock`, so developers should run this from the project root:
+
+```powershell
+corepack enable
+yarn install --immutable
+yarn build
+```
 
 ## Run the Base Template
 
@@ -75,6 +87,7 @@ Edit `.env` before starting it:
 
 ```dotenv
 COMPOSE_PROJECT_NAME=my-client-app
+HTTP_BIND_ADDRESS=127.0.0.1
 HTTP_PORT=8080
 
 POSTGRES_DB=my_client_app
@@ -101,7 +114,7 @@ Useful commands:
 ```powershell
 docker compose ps
 docker compose logs -f
-docker compose logs -f backend
+docker compose logs -f api
 docker compose down
 ```
 
@@ -123,7 +136,41 @@ In the copied `.env`, change at least:
 - `HTTP_PORT` so the host port does not collide with another deployment.
 - `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` so data and credentials remain isolated.
 
-Next, replace the example project feature in `backend/src/server.ts` and `frontend/src/main.tsx` with the client’s actual domain. Add a migration tool before the database schema becomes more than a simple prototype.
+Next, replace the example project feature in `apps/api/src/modules/projects` and `apps/web/src/main.tsx` with the client’s actual domain. Keep shared request schemas and API types in `packages/contracts`. Add a migration tool before the database schema becomes more than a simple prototype.
+
+## Development, Staging, and Production
+
+One repository contains both the web and API applications. Do not create separate source-code pairs for each environment.
+
+For a small client project, use this default arrangement:
+
+| Environment | Location                     | Purpose                         |
+| ----------- | ---------------------------- | ------------------------------- |
+| Development | Each developer's machine     | Fast local work and experiments |
+| Staging     | One VPS Compose project      | Shared testing before release   |
+| Production  | A second VPS Compose project | Live client application         |
+
+On the VPS, keep staging and production in separate directories or Git worktrees. Each gets its own `.env`, Compose project name, database credentials, database volume, and loopback port. For example:
+
+```dotenv
+# Production
+COMPOSE_PROJECT_NAME=acme-production
+HTTP_BIND_ADDRESS=127.0.0.1
+HTTP_PORT=18080
+POSTGRES_DB=acme_production
+
+# Staging
+COMPOSE_PROJECT_NAME=acme-staging
+HTTP_BIND_ADDRESS=127.0.0.1
+HTTP_PORT=18081
+POSTGRES_DB=acme_staging
+```
+
+Use Caddy or another host-level TLS proxy to send `app.example.com` to `127.0.0.1:18080` and `staging.example.com` to `127.0.0.1:18081`. The loopback binding prevents a random application port from becoming public. Never connect staging to production data or credentials.
+
+This is manageable and realistic for production plus staging on a modest VPS. Additional preview environments duplicate containers, databases, backups, and monitoring work. Create them only when needed, give them an expiry date, and clean them up deliberately. See [the deployment-environments specification](../openspec/specs/deployment-environments.md) for the durable operational rule.
+
+For the Bitbucket branch model, separate VPS checkouts, protected branches, deployment commands, and rollback procedure, follow [ENVIRONMENTS.md](ENVIRONMENTS.md). The architectural reasoning behind this layout is recorded in [DESIGN.md](DESIGN.md).
 
 ## Deploy on a VPS
 
@@ -145,7 +192,7 @@ docker compose up -d --build
 docker compose ps
 ```
 
-This rebuilds changed images and recreates only the affected containers. Watch `docker compose logs -f backend` when an API or database change is involved.
+This rebuilds changed images and recreates only the affected containers. Watch `docker compose logs -f api` when an API or database change is involved.
 
 ## Backups and Recovery
 
