@@ -31,3 +31,16 @@ Este registro alimenta `INFORME_IA.md`. No registrar actividad que no haya ocurr
 - **Motivo tecnico:** El catalogo/admin es el prerequisito de datos para carrito y checkout, y debe aislar RBAC antes del flujo transaccional.
 - **Prueba asociada:** Pendiente: products service, validacion y rutas RBAC.
 - **Enlaces:** [[03 Evidencia/Evidencia - Catalogo y Admin]], `openspec/changes/add-product-catalog-admin`.
+
+## AI-2026-08-03-04 - Carrito checkout y ordenes
+
+- **Vertical / requisito:** FR-02, FR-04, FR-05, FR-06, NFR-02, AI-02, AI-03.
+- **Herramienta o agente:** Codex con `$openspec-propose` y `$openspec-apply-change`.
+- **Objetivo:** Implementar carrito persistente, checkout simulado atomico, idempotencia y historial aislado.
+- **Prompt resumido o enlace:** El usuario pidio continuar con la fase "cart + checkout + orders" despues de catalogo/admin.
+- **Salida recibida:** Cambio `openspec/changes/add-cart-checkout-orders` y modulos NestJS `cart` y `orders`.
+- **Revision humana:** Pendiente de revision final por el usuario despues de pruebas.
+- **Correccion o rechazo:** Se rechazo guest cart, pago real y reservas previas; se uso checkout transaccional con decremento condicional de stock.
+- **Motivo tecnico:** El flujo evaluable necesita trazabilidad y consistencia antes que integraciones externas.
+- **Prueba asociada:** Cart service, checkout repository/service, idempotencia, stock insuficiente, ultima unidad concurrente e historial por usuario.
+- **Enlaces:** [[03 Evidencia/Evidencia - Checkout y Ordenes]], `openspec/changes/add-cart-checkout-orders`.

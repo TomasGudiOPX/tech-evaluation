@@ -4,6 +4,8 @@ import { Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { CartModule } from './modules/cart/cart.module.js';
+import { OrderModule } from './modules/orders/order.module.js';
 import { ProductModule } from './modules/products/product.module.js';
 import { HealthController } from './health.controller.js';
 import type { AppConfig } from './platform/config.js';
@@ -15,7 +17,7 @@ class AppModule {
   static forConfig(config: AppConfig) {
     return {
       module: AppModule,
-      imports: [PlatformModule.forConfig(config), AuthModule, ProductModule],
+      imports: [PlatformModule.forConfig(config), AuthModule, ProductModule, CartModule, OrderModule],
       controllers: [HealthController],
     };
   }

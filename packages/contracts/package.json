@@ -15,6 +15,14 @@
     "./products": {
       "types": "./dist/products.d.ts",
       "default": "./dist/products.js"
+    },
+    "./cart": {
+      "types": "./dist/cart.d.ts",
+      "default": "./dist/cart.js"
+    },
+    "./orders": {
+      "types": "./dist/orders.d.ts",
+      "default": "./dist/orders.js"
     }
   },
   "scripts": {

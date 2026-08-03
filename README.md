@@ -12,10 +12,14 @@ Identity and RBAC use email/password authentication with JWT access tokens. Publ
 
 Products are exposed through a public active-only catalog and protected administrator writes. Product removal is logical retirement: retired products stay in PostgreSQL for auditability and future order-history integrity, but they disappear from public catalog/detail responses and cannot be checked out later.
 
+Customer carts are authenticated and persisted in PostgreSQL. Checkout is simulated: no payment provider is called, but the API atomically decrements stock, creates immutable order item snapshots, stores the checkout idempotency result, and clears the cart. `POST /api/orders/checkout` requires `Idempotency-Key`; a retry of a completed checkout returns the original order, while reusing the key for a different non-empty cart returns `IDEMPOTENCY_KEY_REUSED`.
+
 ## API Scope
 
 - `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/profile`.
 - `GET /api/products`, `GET /api/products/:id`.
+- `GET /api/cart`, `POST /api/cart/items`, `PATCH /api/cart/items/:productId`, `DELETE /api/cart/items/:productId`.
+- `POST /api/orders/checkout`, `GET /api/orders`.
 - `POST /api/admin/products`, `PATCH /api/admin/products/:id`, `DELETE /api/admin/products/:id`.
 
 Read [docs/VPS-DOC.md](docs/VPS-DOC.md) for the human deployment and usage guide. [docs/README.md](docs/README.md) indexes the full documentation. Coding agents should follow [AGENT.md](AGENT.md).
@@ -28,14 +32,14 @@ It borrows Twenty's useful production pattern: containerize the application, kee
 
 ```
 browser -> nginx proxy -> React frontend
-                     -> Fastify API -> PostgreSQL
+                     -> NestJS API -> PostgreSQL
 ```
 
 | Path | Responsibility |
 | --- | --- |
 | `apps/web/` | Vite + React single-page app, served as static files |
 | `apps/api/src/platform/` | Configuration and database connection setup |
-| `apps/api/src/modules/` | Client business features, beginning with `projects` |
+| `apps/api/src/modules/` | Client business features split by domain module |
 | `apps/api/src/engine/mcp/` | Optional MCP transport, authentication, instructions, and tools |
 | `packages/contracts/` | Shared API schemas and types for the frontend and backend |
 | `openspec/` | Accepted operational specifications and future change proposals |
@@ -64,7 +68,7 @@ yarn build
 4. Run the deterministic product seed from the source checkout after dependencies are installed: `yarn workspace @vps-template/api seed`.
 5. Open `http://localhost:8080` and check `http://localhost:8080/health`.
 
-The UI creates projects through `POST /api/projects`, so it verifies the proxy, frontend, backend, and database together.
+The API now covers the customer commerce workflow through catalog, authenticated cart, simulated checkout, and order history.
 
 ## Start a client project
 

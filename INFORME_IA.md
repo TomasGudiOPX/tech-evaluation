@@ -6,7 +6,7 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 
 - Codex: exploracion inicial, creacion de artefactos OpenSpec, bootstrap del vault y primera implementacion de identidad/RBAC.
 - Corepack/Yarn: instalacion reproducible de workspaces y ejecucion de Prisma, tests y builds.
-- Prisma: generacion de cliente y migraciones versionadas para usuarios y productos.
+- Prisma: generacion de cliente y migraciones versionadas para usuarios, productos, carrito y ordenes.
 
 ## Especificacion previa
 
@@ -42,16 +42,27 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 - **Verificacion:** `prisma:generate`, build de contracts, build de API, 17 tests de API, build de web y build general.
 - **Commit asociado:** `8ed12d2 feat(products): add catalog admin for FR-01 FR-07 FR-06`.
 
+### AI-2026-08-03-04 - Carrito, checkout y ordenes
+
+- **Contexto:** identidad/RBAC y catalogo/admin ya estaban completos; el diseño aprobado exige carrito persistente, checkout atomico, idempotencia e historial.
+- **Objetivo:** implementar la siguiente vertical `add-cart-checkout-orders` con pruebas como evidencia de `AI-02`.
+- **Decision humana:** mantener carrito solo para usuarios autenticados y checkout simulado, sin pagos reales ni guest-cart merge.
+- **Resultado:** contratos compartidos para carrito/ordenes, modelos Prisma, migracion versionada, modulos NestJS `cart` y `orders`, y pruebas de checkout.
+- **Correccion/rechazo:** se rechazo guardar pagos externos o reservas previas; la consistencia se concentra en una transaccion con decremento condicional de stock.
+- **Verificacion:** `prisma:generate` OK; contracts build OK; API build OK; API test OK: 8 archivos, 29 tests; web build OK; build general OK.
+- **Commit asociado:** `feat(orders): add cart checkout orders for FR-02 FR-04 FR-05 AI-02`.
+
 ## Correcciones o rechazos relevantes
 
 - No se acepto que el request de registro pueda enviar `role` o `isAdmin`; el servicio debe crear siempre `customer`.
 - No se acepto crear un admin por defecto si faltan variables de entorno.
 - No se acepto conservar el acceso a datos con `CREATE TABLE IF NOT EXISTS` para usuarios; se introdujo Prisma con migracion versionada.
 - No se acepto borrar productos fisicamente; se usa retiro logico para preservar trazabilidad y futuras ordenes.
+- No se acepto agregar checkout sin `Idempotency-Key`; las reejecuciones deben ser seguras por usuario y clave.
 
 ## Estado
 
-Catalogo/admin quedo verificado con Prisma generate, build de contracts/API, 17 tests de API y build general. Pendiente completar las siguientes verticales, commits descriptivos finales y reflexion final.
+Catalogo/admin quedo verificado con Prisma generate, build de contracts/API, 17 tests de API y build general. Carrito/checkout/ordenes quedo verificado con Prisma generate, build de contracts/API, 29 tests de API, build web y build general. Pendiente reflexion final.
 
 ## Comandos de verificacion usados
 
