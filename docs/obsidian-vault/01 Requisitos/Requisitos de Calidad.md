@@ -27,3 +27,18 @@ tags: [requisitos, calidad]
 - Error esperado: `{ code, message, fieldErrors? }`.
 - Validacion usa `fieldErrors`; auth, RBAC y conflictos usan codigos estables.
 - Conflictos de dominio devuelven HTTP 409.
+
+## NFR-04 - Seguridad API
+
+- `@fastify/helmet` registra headers de seguridad en todas las respuestas.
+- `@nestjs/throttler` con `AppThrottlerGuard` aplica rate limit global por IP, considerando `X-Forwarded-For`.
+- Al excedir el limite, la API responde HTTP 429 con `{ code: 'RATE_LIMITED', message }` via `AppExceptionFilter`.
+- Pruebas backend afirman headers presentes y shape del 429.
+
+## NFR-05 - Lint y formato
+
+- ESLint flat config (`eslint.config.mjs`) con reglas TS recomendadas y hooks React para `apps/web`.
+- Prettier con `.prettierrc` y `.prettierignore`.
+- Scripts raiz: `lint:eslint`, `format:check`, `format:write`.
+- CI ejecuta `lint:eslint` y `format:check` ademas del `tsc --noEmit` existente.
+- El codigo base queda formateado en un solo `chore(style)` para partir de una linea base consistente.

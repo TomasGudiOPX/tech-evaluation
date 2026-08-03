@@ -12,10 +12,14 @@ Base de conocimiento y trazabilidad para la evaluacion tecnica.
 ## Navegacion
 
 - [[01 Requisitos/Mapa de Requisitos|Mapa de requisitos]]
-- [[02 Arquitectura/Arquitectura General|Arquitectura general]]
+- [[02 Arquitectura/Modulos de Dominio|Modulos de dominio]]
 - [[03 Evidencia/Registro de Evidencia IA|Registro de evidencia IA]]
+- [[03 Evidencia/Evidencia - Identidad y RBAC|Evidencia Identidad y RBAC]]
+- [[03 Evidencia/Evidencia - Catalogo y Admin|Evidencia Catalogo y Admin]]
+- [[03 Evidencia/Evidencia - Checkout y Ordenes|Evidencia Checkout y Ordenes]]
 - [[03 Evidencia/Evidencia - QA Implementation|Evidencia QA Implementation]]
-- [[04 Gestion/Plan de Entrega|Plan de entrega]]
+- [[03 Evidencia/Evidencia - Evaluacion Ampliada|Evidencia Evaluacion Ampliada]]
+- [[03 Evidencia/Evidencia - Entrega Final|Evidencia Entrega Final]]
 - [[04 Gestion/Registro de Decisiones|Registro de decisiones]]
 
 ## Principios

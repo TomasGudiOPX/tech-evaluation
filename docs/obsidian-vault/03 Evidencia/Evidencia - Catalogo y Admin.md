@@ -1,6 +1,6 @@
 ---
 tags: [evidencia, catalogo, admin, productos]
-requirement_ids: [FR-01, FR-06, FR-07, NFR-02, AI-03]
+requirement_ids: [FR-01, FR-06, NFR-02, AI-03]
 status: accepted
 ---
 
