@@ -13,6 +13,34 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 - `openspec/changes/add-identity-rbac`: primera especificacion antes de codigo para registro, login, perfil autenticado, RBAC y seed admin.
 - `docs/obsidian-vault/`: vault de trazabilidad con mapa de requisitos, decisiones y evidencia por vertical.
 
+## TDD (Test-Driven Development)
+
+No se aplico TDD estricto en todo el proyecto. La decision fue deliberada y se documento por vertical:
+
+- **Verticales iniciales (auth/products/cart/orders):**flujo SDD (spec → contracts → implementacion → pruebas). La IA generaba implementacion y pruebas juntas; el humano revisaba ambos. No se priorizo test-first porque las verticales dependian de contratos compartidos (`packages/contracts`) que debian estabilizarse primero, y el valor de TDD sereduce cuando la superficie es CRUD sobre Prisma ya validado por esquema y migracion.
+- **Inlining TDD en `close-evaluation-gaps`(AI-2026-08-03-08):**aqui si se aplico TDD. Las tareas 1.4 y 2.5 de `openspec/changes/close-evaluation-gaps/tasks.md` exigen la prueba antes del cambio de comportamiento:
+  - `apps/api/src/platform/security.test.ts`: se escribieron las aserciones de headers de seguridad (`helmet`) y de la forma `429` estructurado **antes** de registrar `registerSecurity` y `AppThrottlerGuard`, y se itero la prueba en rojo hasta que el guard mapeo `ThrottlerException` → `{ code: 'RATE_LIMITED', message }` en `AppExceptionFilter`.
+  - `apps/api/src/modules/products/product.service.test.ts`: se agregaron casos para paginacion por defecto, `?page=2&pageSize=4` y `?page=0` → `400` con `fieldErrors` **antes** de tocar `ProductRepository`/`ProductService.listActive`, forzando el contrato de paginacion desde la prueba.
+- **Smoke QA (`tests/qa-commerce-smoke.mjs`):**escrito antes de correr el flujo end-to-end en `127.0.0.1:18080`; el smoke es la especificacion ejecutable del evaluador (health, catalogo, auth, RBAC, carrito, checkout idempotente, carrito vacio, historial).
+
+Razon del mix: TDD brilla donde el comportamiento es nuevo y propenso a regresiones (seguridad, paginacion, smoke de integracion); aporta menos en CRUD vertical ya cubierto por esquema y contratos. La separacion se discute en `docs/obsidian-vault/` y en los tasks de cada cambio.
+
+## Que genero la IA vs. que hice yo
+
+| Area | Genero la IA (Codex) | Hice yo (revision/decision) |
+|---|---|---|
+| OpenSpec | Estructura de `changes/` y deltas de spec por vertical | Defini el alcance de cada slice, rechace hard delete/uploads/filtros fuera de slice, segregue `add-cart-checkout-orders` de `add-product-catalog-admin` |
+| Contracts (`packages/contracts`) | Zod schemas y tipos derivados | Corregi `Idempotency-Key` obligatorio en checkout y el shape de error `{ code, message, fieldErrors? }` para que el frontend lo consuma uniforme |
+| Auth/RBAC | `auth.service`, `roles.guard`, seed admin | Reescribi la creacion de usuario para ignorar `role`/`isAdmin` del request; servicio crea siempre `customer`; admin solo por seed controlado |
+| Products | CRUD base y `isActive` toggle | Cambie `delete` fisico por retiro logico; agregue validacion de stock negativo que la IA omitia |
+| Cart/Orders | Modulos NestJS y transaccion de checkout | Reescribi el decremento de stock para que sea condicional dentro de la transaccion; agregue idempotencia por `(userId, Idempotency-Key)` que la IA no contemplaba |
+| UI web | Componentes Vite + React del storefront | Decidi mantener Vite/React (no migrar a Next.js); rechaze copiar `stitch_minimalist_retail_showcase` literal; ajuste el cliente fetch para no mandar `Content-Type: application/json` en checkout sin body (fix `262a67b`) |
+| CI/Docker | Workflow GitHub Actions y Dockerfiles | Documente que no hay perfiles `dev`/`qa`/`prod`; agregue solo perfil Compose `ops` para migrate/seed; documente separacion de entornos por `.env`/`COMPOSE_PROJECT_NAME`/puertos |
+| QA | `tests/qa-commerce-smoke.mjs` y planes de prueba | Elegi `qa-smoke`/`qa-backend-full-test`/`qa-front-playwright-test` sobre TestSprite segun las skills locales; revise los 12 checks contra `127.0.0.1:18080` |
+| Seguridad | `helmet` + `@nestjs/throttler` | Defini el shape `429` estructurado y el tracker `X-Forwarded-For`; escribi `security.test.ts` primero (TDD) |
+
+En todos los casos la IA produjo el primer draft; el valor agregado humano fue alcance, validacion de bordes, consistencia de contratos y rechazo de atajos (admin por defecto, `CREATE TABLE IF NOT EXISTS`, pagos externos, perfiles Docker que no existen).
+
 ## Prompts representativos
 
 ### AI-2026-08-03-01 - Especificacion inicial de identidad y RBAC
@@ -116,3 +144,11 @@ yarn node tests/qa-commerce-smoke.mjs
 ```
 
 En el entorno del agente, Vitest/Vite necesitaron ejecucion con permisos elevados porque la sandbox bloqueaba procesos auxiliares con `spawn EPERM`. No se cambio el codigo para ocultar ese problema; se verifico el mismo comando fuera de esa restriccion.
+
+## Reflexion final
+
+1. La IA es un acelerador de scaffolding y de verticales CRUD, pero desploma en bordes (idempotencia, stock negativo, retiro logico, shape de error); ahi el juicio humano es insustituible.
+2. OpenSpec/SDD conviene alinear la IA al cambio antes que al archivo: el `change` acota el alcance y vuelve reproducible lo que la IA genera, evitando scope creep silencioso.
+3. TDD mixto (test-first solo donde el comportamiento es nuevo) rindio mas que TDD dogmatico; el spec y los contratos Zod ya actuan como primera capa de prueba en el CRUD.
+4. La trazabilidad (vault Obsidian + commits con `FR-xx`/`AI-xx` + smoke ejecutable) fue mas valiosa que el propio codigo al momento de defender la entrega: deja eficiente evidencia para el evaluador y propia para mi.
+5. Aprendi a rechazar atajos de la IA (admin por defecto, perfiles Docker inexistentes, copiar un showcase literal) en lugar de aceptarlos; el costo de decir no ahora es menor que el de explicar la inconsistencia despues.
