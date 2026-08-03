@@ -111,10 +111,12 @@ export function useCartState() {
 
   useEffect(() => {
     void withFeedback(loadProducts);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     void loadProfile().finally(() => setIsAuthReady(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   async function authenticate(event: FormEvent<HTMLFormElement>) {

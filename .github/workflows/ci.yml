@@ -32,6 +32,12 @@ jobs:
       - name: Lint
         run: yarn lint
 
+      - name: Lint ESLint
+        run: yarn lint:eslint
+
+      - name: Format check
+        run: yarn format:check
+
       - name: Build contracts
         run: yarn workspace @vps-template/contracts build
 

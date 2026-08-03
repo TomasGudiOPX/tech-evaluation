@@ -7,11 +7,17 @@ import type { ProductRow } from './product.types.js';
 export class ProductRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async listActive(): Promise<ProductRow[]> {
-    return this.prisma.product.findMany({
-      where: { isActive: true },
+  async listActive(page?: number, pageSize?: number): Promise<{ items: ProductRow[]; total: number }> {
+    const where = { isActive: true };
+    const total = await this.prisma.product.count({ where });
+    const skip = page && pageSize ? (page - 1) * pageSize : undefined;
+    const items = await this.prisma.product.findMany({
+      where,
       orderBy: { createdAt: 'desc' },
+      ...(skip !== undefined ? { skip, take: pageSize } : {}),
     });
+
+    return { items, total };
   }
 
   async findActiveById(id: string): Promise<ProductRow | null> {

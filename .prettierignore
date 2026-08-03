@@ -1,0 +1,8 @@
+node_modules
+**/dist
+.yarn
+openspec
+docs
+tests
+vault
+*.md

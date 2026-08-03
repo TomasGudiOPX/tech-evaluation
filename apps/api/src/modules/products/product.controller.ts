@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
@@ -25,8 +25,8 @@ export class ProductController {
 
   @Get()
   @ApiOperation({ summary: 'List active catalog products' })
-  async list() {
-    return { products: await this.products.listActive() };
+  async list(@Query() query: unknown) {
+    return this.products.listActive(query);
   }
 
   @Get(':id')

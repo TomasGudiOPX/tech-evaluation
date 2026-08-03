@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { Product } from '@vps-template/contracts/products';
+import type { Pagination, Product } from '@vps-template/contracts/products';
 import { createProductSchema, updateProductSchema } from '@vps-template/contracts/products';
 import { z } from 'zod';
 import { AppError } from '../../platform/app-error.js';
@@ -8,12 +8,31 @@ import { toProduct } from './product.types.js';
 
 const productIdSchema = z.string().uuid();
 
+const listQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1).optional(),
+  pageSize: z.coerce.number().int().min(1).max(100).optional(),
+});
+
+export type ProductListResult = {
+  products: Product[];
+  pagination: Pagination;
+};
+
 @Injectable()
 export class ProductService {
   constructor(private readonly repository: ProductRepository) {}
 
-  async listActive(): Promise<Product[]> {
-    return (await this.repository.listActive()).map(toProduct);
+  async listActive(query: unknown = {}): Promise<ProductListResult> {
+    const { page, pageSize } = listQuerySchema.parse(query);
+    const currentPage = page ?? 1;
+    const { items, total } = await this.repository.listActive(currentPage, pageSize);
+    const products = items.map(toProduct);
+    const totalPages = pageSize ? Math.ceil(total / pageSize) : 1;
+
+    return {
+      products,
+      pagination: { page: currentPage, pageSize: pageSize ?? total, total, totalPages },
+    };
   }
 
   async getActive(id: string): Promise<Product> {

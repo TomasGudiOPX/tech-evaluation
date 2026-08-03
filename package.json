@@ -12,6 +12,18 @@
     "build:api": "yarn workspace @vps-template/api build",
     "build:web": "yarn workspace @vps-template/web build",
     "lint": "yarn workspaces foreach -A -t run lint",
+    "lint:eslint": "eslint .",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
     "test": "yarn workspace @vps-template/api test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.9.0",
+    "prettier": "^3.9.6",
+    "typescript-eslint": "^8.65.0"
   }
 }

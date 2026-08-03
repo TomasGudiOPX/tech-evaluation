@@ -28,7 +28,21 @@ export const updateProductSchema = createProductSchema.partial().refine((value) 
   message: 'At least one product field is required',
 });
 
+export const paginationSchema = z.object({
+  page: z.number().int().min(1),
+  pageSize: z.number().int().min(1),
+  total: z.number().int().min(0),
+  totalPages: z.number().int().min(0),
+});
+
+export const productListResponseSchema = z.object({
+  products: z.array(productSchema),
+  pagination: paginationSchema,
+});
+
 export type ProductCategory = z.infer<typeof productCategorySchema>;
 export type Product = z.infer<typeof productSchema>;
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 export type UpdateProductInput = z.infer<typeof updateProductSchema>;
+export type Pagination = z.infer<typeof paginationSchema>;
+export type ProductListResponse = z.infer<typeof productListResponseSchema>;

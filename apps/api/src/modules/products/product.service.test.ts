@@ -25,10 +25,25 @@ const retiredProduct: ProductRow = {
   isActive: false,
 };
 
-function createService(products: ProductRow[] = [activeProduct, retiredProduct]) {
+const thirdProduct: ProductRow = {
+  ...activeProduct,
+  id: '00000000-0000-4000-8000-000000000003',
+  name: 'Third Product',
+  isActive: true,
+};
+
+function createService(products: ProductRow[] = [activeProduct, retiredProduct, thirdProduct]) {
   const repository = {
-    listActive: vi.fn(async () => products.filter((product) => product.isActive)),
-    findActiveById: vi.fn(async (id: string) => products.find((product) => product.id === id && product.isActive) ?? null),
+    listActive: vi.fn(async (page?: number, pageSize?: number) => {
+      const active = products.filter((product) => product.isActive);
+      const total = active.length;
+      const skip = page && pageSize ? (page - 1) * pageSize : undefined;
+      const items = skip !== undefined && pageSize ? active.slice(skip, skip + pageSize) : active;
+      return { items, total };
+    }),
+    findActiveById: vi.fn(
+      async (id: string) => products.find((product) => product.id === id && product.isActive) ?? null,
+    ),
     findById: vi.fn(async (id: string) => products.find((product) => product.id === id) ?? null),
     create: vi.fn(async (input) => ({ ...activeProduct, ...input })),
     update: vi.fn(async (id, input) => ({ ...activeProduct, id, ...input })),
@@ -42,12 +57,36 @@ function createService(products: ProductRow[] = [activeProduct, retiredProduct])
 }
 
 describe('ProductService', () => {
-  it('lists only active products', async () => {
+  it('lists only active products with full-list pagination metadata', async () => {
     const { service } = createService();
 
-    await expect(service.listActive()).resolves.toEqual([
+    const result = await service.listActive();
+
+    expect(result.products).toHaveLength(2);
+    expect(result.products).toEqual([
       expect.objectContaining({ id: activeProduct.id, isActive: true }),
+      expect.objectContaining({ id: thirdProduct.id, isActive: true }),
     ]);
+    expect(result.pagination).toEqual({ page: 1, pageSize: 2, total: 2, totalPages: 1 });
+  });
+
+  it('pages the product list and reports pagination metadata', async () => {
+    const { repository, service } = createService();
+
+    const result = await service.listActive({ page: 2, pageSize: 1 });
+
+    expect(repository.listActive).toHaveBeenCalledWith(2, 1);
+    expect(result.products).toHaveLength(1);
+    expect(result.pagination).toEqual({ page: 2, pageSize: 1, total: 2, totalPages: 2 });
+  });
+
+  it('rejects invalid pagination query params', async () => {
+    const { service } = createService();
+
+    await expect(service.listActive({ page: 0 })).rejects.toBeInstanceOf(ZodError);
+    await expect(service.listActive({ page: 'abc' })).rejects.toBeInstanceOf(ZodError);
+    await expect(service.listActive({ pageSize: 0 })).rejects.toBeInstanceOf(ZodError);
+    await expect(service.listActive({ pageSize: 101 })).rejects.toBeInstanceOf(ZodError);
   });
 
   it('hides retired products from public detail', async () => {
