@@ -35,7 +35,7 @@ function createService(users: StoredUser[] = []) {
 
   return {
     repository,
-    service: new AuthService(repository as AuthRepository, tokens as TokenService, config),
+    service: new AuthService(repository as unknown as AuthRepository, tokens as unknown as TokenService, config),
     tokens,
     users,
   };

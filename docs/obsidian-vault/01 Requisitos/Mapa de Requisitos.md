@@ -6,13 +6,13 @@ tags: [requisitos, indice]
 
 | ID | Requisito | Evidencia o contexto |
 | --- | --- | --- |
-| FR-01 | Catalogo y detalle con precio, imagen y stock | [[01 Requisitos/Requisitos Funcionales#FR-01 - Catalogo]] |
+| FR-01 | Catalogo y detalle con precio, imagen y stock | [[03 Evidencia/Evidencia - Catalogo y Admin]] |
 | FR-02 | Carrito persistente del usuario autenticado | [[01 Requisitos/Requisitos Funcionales#FR-02 - Carrito]] |
 | FR-03 | Registro, login y roles | [[03 Evidencia/Evidencia - Identidad y RBAC]] |
 | FR-04 | Checkout simulado atomico | [[03 Evidencia/Evidencia - Checkout y Ordenes]] |
 | FR-05 | Historial aislado por usuario | [[01 Requisitos/Requisitos Funcionales#FR-05 - Historial]] |
 | FR-06 | API REST documentada y errores consistentes | [[01 Requisitos/Requisitos de Calidad#NFR-03 - API y errores]] |
-| FR-07 | Admin CRUD con retiro logico de productos | [[02 Arquitectura/Modulos de Dominio#Products]] |
+| FR-07 | Admin CRUD con retiro logico de productos | [[03 Evidencia/Evidencia - Catalogo y Admin]] |
 | NFR-01 | Modulos, secretos por entorno, migraciones | [[01 Requisitos/Requisitos de Calidad]] |
 | NFR-02 | Pruebas, lint, formato, Compose y CI | [[01 Requisitos/Requisitos de Calidad#NFR-02 - Calidad y entrega]] |
 | AI-01 | OpenSpec antes de codigo | [[03 Evidencia/Plantilla de Evidencia]] |

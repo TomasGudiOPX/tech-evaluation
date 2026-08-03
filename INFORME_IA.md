@@ -28,12 +28,21 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 - **Resultado:** README, ADR y OpenSpec documentan que el reemplazo del template es intencional.
 - **Correccion/rechazo:** se rechazo implementar auth sobre Fastify/raw pg porque desviaria el proyecto del stack elegido para la evaluacion.
 
+### AI-2026-08-03-03 - Catalogo publico y administracion de productos
+
+- **Contexto:** identidad/RBAC ya tiene guard contracts; `evaluation.md` exige catalogo, detalle y roles/admin como alcance evaluable.
+- **Objetivo:** especificar e implementar productos activos publicos y administracion protegida.
+- **Decision humana:** separar catalogo/admin de carrito/checkout para mantener una vertical verificable y trazable.
+- **Resultado:** `openspec/changes/add-product-catalog-admin` define e implementa catalogo, detalle, create/update/retire y seed deterministico.
+- **Correccion/rechazo:** se excluyeron hard delete, uploads, filtros y checkout para proteger el alcance del slice.
+
 ## Correcciones o rechazos relevantes
 
 - No se acepto que el request de registro pueda enviar `role` o `isAdmin`; el servicio debe crear siempre `customer`.
 - No se acepto crear un admin por defecto si faltan variables de entorno.
 - No se acepto conservar el acceso a datos con `CREATE TABLE IF NOT EXISTS` para usuarios; se introdujo Prisma con migracion versionada.
+- No se acepto borrar productos fisicamente; se usa retiro logico para preservar trazabilidad y futuras ordenes.
 
 ## Estado
 
-Pendiente completar resultados de pruebas, rutas finales de implementacion, commits descriptivos y reflexion final.
+Catalogo/admin quedo verificado con Prisma generate, build de contracts/API, 17 tests de API y build general. Pendiente completar las siguientes verticales, commits descriptivos finales y reflexion final.

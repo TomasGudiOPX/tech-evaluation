@@ -10,6 +10,14 @@ This replaces the original Vite/Fastify template deliberately. The evaluation al
 
 Identity and RBAC use email/password authentication with JWT access tokens. Public registration creates only `customer` users; administrator access is created through environment-controlled seed credentials, not request input.
 
+Products are exposed through a public active-only catalog and protected administrator writes. Product removal is logical retirement: retired products stay in PostgreSQL for auditability and future order-history integrity, but they disappear from public catalog/detail responses and cannot be checked out later.
+
+## API Scope
+
+- `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/profile`.
+- `GET /api/products`, `GET /api/products/:id`.
+- `POST /api/admin/products`, `PATCH /api/admin/products/:id`, `DELETE /api/admin/products/:id`.
+
 Read [docs/VPS-DOC.md](docs/VPS-DOC.md) for the human deployment and usage guide. [docs/README.md](docs/README.md) indexes the full documentation. Coding agents should follow [AGENT.md](AGENT.md).
 
 An optional bearer-token-protected MCP endpoint is documented in [docs/VPS-DOC.md](docs/VPS-DOC.md#optional-mcp-connection). Its client configuration starter is [mcp-config.example.json](mcp-config.example.json).
@@ -43,6 +51,8 @@ For source-only work, use Node 22 with Corepack:
 ```powershell
 corepack enable
 yarn install --immutable
+yarn workspace @vps-template/api prisma:generate
+yarn workspace @vps-template/api seed
 yarn build
 ```
 
@@ -51,7 +61,8 @@ yarn build
 1. Copy the environment defaults: `Copy-Item .env.example .env`
 2. Change `POSTGRES_PASSWORD` in `.env`.
 3. Start the stack: `docker compose up -d --build`
-4. Open `http://localhost:8080` and check `http://localhost:8080/health`.
+4. Run the deterministic product seed from the source checkout after dependencies are installed: `yarn workspace @vps-template/api seed`.
+5. Open `http://localhost:8080` and check `http://localhost:8080/health`.
 
 The UI creates projects through `POST /api/projects`, so it verifies the proxy, frontend, backend, and database together.
 

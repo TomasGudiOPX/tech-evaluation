@@ -11,6 +11,10 @@
     "./auth": {
       "types": "./dist/auth.d.ts",
       "default": "./dist/auth.js"
+    },
+    "./products": {
+      "types": "./dist/products.d.ts",
+      "default": "./dist/products.js"
     }
   },
   "scripts": {

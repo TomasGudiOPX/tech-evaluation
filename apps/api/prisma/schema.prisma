@@ -22,3 +22,17 @@ model User {
 
   @@map("users")
 }
+
+model Product {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  description String
+  priceCents  Int      @map("price_cents")
+  imageUrl    String   @map("image_url")
+  stock       Int
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("products")
+}
