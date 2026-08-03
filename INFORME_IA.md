@@ -62,6 +62,15 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 - **Verificacion:** lint OK; contracts build OK; Prisma generate OK con warning no bloqueante de configuracion Prisma 7; API build OK; API tests OK: 8 archivos, 29 tests; web build OK; build raiz OK; Compose config OK.
 - **Commit asociado:** commit `feat(delivery): finalize docs ci ui polish`.
 
+### AI-2026-08-03-06 - Arranque Docker y documentacion operativa
+
+- **Contexto:** al intentar levantar la aplicacion desde cero se detecto que Docker Compose construia las apps sin compilar antes `packages/contracts`, que el runtime API necesitaba `@fastify/static` para Swagger/Fastify, y que las guias no aplicaban migraciones antes del seed.
+- **Objetivo:** dejar un proceso reproducible para desarrollo local, Docker local, staging y produccion.
+- **Decision humana:** documentar que no existen perfiles Docker `dev`, `qa` o `prod`; los entornos se separan por `.env`, checkout, branch, `COMPOSE_PROJECT_NAME`, puertos, base de datos, credenciales y dominio. Se agrego solo el perfil Compose `ops` para tareas de migracion y seed.
+- **Resultado:** Dockerfile API con target `api-tools`, Compose con servicios `migrate` y `seed` bajo perfil `ops`, Postgres en loopback configurable, README y guias operativas actualizadas.
+- **Correccion/rechazo:** se rechazo presentar `docker compose up` + `yarn seed` como suficiente porque no aplica migraciones y no conecta limpiamente contra el `db` interno de Compose.
+- **Verificacion:** Docker health OK, catalogo seed OK, Swagger OK y build raiz OK despues de corregir arranque/runtime.
+
 ## Correcciones o rechazos relevantes
 
 - No se acepto que el request de registro pueda enviar `role` o `isAdmin`; el servicio debe crear siempre `customer`.
@@ -71,10 +80,11 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 - No se acepto agregar checkout sin `Idempotency-Key`; las reejecuciones deben ser seguras por usuario y clave.
 - No se acepto tratar el Stitch showcase como contenido canonico; solo guia UI/UX.
 - No se acepto migrar a Next.js al final porque no aporta al alcance verificado y aumenta riesgo.
+- No se acepto documentar perfiles Docker `dev`, `qa` o `prod` que no existen; el modelo real usa entornos por configuracion y un perfil operativo `ops` para migraciones/seed.
 
 ## Estado
 
-Catalogo/admin quedo verificado con Prisma generate, build de contracts/API, 17 tests de API y build general. Carrito/checkout/ordenes quedo verificado con Prisma generate, build de contracts/API, 29 tests de API, build web y build general. Docs/CI/polish quedo verificado con lint, builds, tests y Compose config.
+Catalogo/admin quedo verificado con Prisma generate, build de contracts/API, 17 tests de API y build general. Carrito/checkout/ordenes quedo verificado con Prisma generate, build de contracts/API, 29 tests de API, build web y build general. Docs/CI/polish quedo verificado con lint, builds, tests y Compose config. El arranque Docker local quedo verificado con `migrate`, `seed`, `up`, `/health`, `/api/products` y `/api/docs`.
 
 ## Comandos de verificacion usados
 
@@ -87,6 +97,9 @@ corepack yarn workspace @vps-template/api test
 corepack yarn workspace @vps-template/web build
 corepack yarn build
 docker compose --env-file .env.example config
+docker compose --env-file .env --profile ops run --rm --build migrate
+docker compose --env-file .env --profile ops run --rm seed
+docker compose --env-file .env up -d --build
 ```
 
 En el entorno del agente, Vitest/Vite necesitaron ejecucion con permisos elevados porque la sandbox bloqueaba procesos auxiliares con `spawn EPERM`. No se cambio el codigo para ocultar ese problema; se verifico el mismo comando fuera de esa restriccion.

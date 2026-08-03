@@ -23,6 +23,7 @@ Base de conocimiento y trazabilidad para la evaluacion tecnica.
 - Mantener un monolito modular: una web, una API y una base de datos.
 - Registrar uso de IA, revision humana y correcciones concretas.
 - Proteger identidad, stock y checkout con pruebas.
+- Mantener entornos reproducibles: migrar antes de seed y separar staging/produccion por configuracion, no por perfiles Docker ficticios.
 
 ## Flujo
 

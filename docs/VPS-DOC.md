@@ -26,8 +26,9 @@ You need Docker Engine, the Docker Compose plugin, Node 22 with Corepack for sou
 
 ```powershell
 Copy-Item .env.example .env
+docker compose --env-file .env --profile ops run --rm --build migrate
+docker compose --env-file .env --profile ops run --rm seed
 docker compose --env-file .env up -d --build
-yarn workspace @vps-template/api seed
 ```
 
 Verify:
@@ -41,7 +42,7 @@ Open:
 - Storefront: `http://localhost:8080`
 - Swagger/OpenAPI: `http://localhost:8080/api/docs`
 
-The deterministic seed creates the admin user from `ADMIN_SEED_EMAIL` and `ADMIN_SEED_PASSWORD` when both are present, and inserts sample products only when the product table is empty.
+The deterministic seed creates the admin user from `ADMIN_SEED_EMAIL` and `ADMIN_SEED_PASSWORD` when both are present, and inserts sample products only when the product table is empty. Run `migrate` before `seed` on every fresh database.
 
 ## Source Checks
 
@@ -69,6 +70,8 @@ Use one source tree per deployed environment. A normal small deployment has:
 | Staging | `develop` | Shared integration and review |
 | Production | `main` | Live application |
 
+These are not Docker Compose `dev`, `qa`, or `prod` profiles. The same Compose file is reused with environment-specific configuration. The only Compose profile is `ops`, which exposes the one-off `migrate` and `seed` jobs.
+
 Each VPS environment needs its own checkout or worktree, `.env`, Compose project name, PostgreSQL credentials, volume, loopback port, domain, and backup routine.
 
 ```dotenv
@@ -77,12 +80,20 @@ COMPOSE_PROJECT_NAME=shopping-cart-production
 HTTP_BIND_ADDRESS=127.0.0.1
 HTTP_PORT=18080
 POSTGRES_DB=shopping_cart_production
+POSTGRES_USER=shopping_cart_production
+POSTGRES_PASSWORD=<unique-secret>
+POSTGRES_BIND_ADDRESS=127.0.0.1
+POSTGRES_PORT=15432
 
 # staging/.env
 COMPOSE_PROJECT_NAME=shopping-cart-staging
 HTTP_BIND_ADDRESS=127.0.0.1
 HTTP_PORT=18081
 POSTGRES_DB=shopping_cart_staging
+POSTGRES_USER=shopping_cart_staging
+POSTGRES_PASSWORD=<different-unique-secret>
+POSTGRES_BIND_ADDRESS=127.0.0.1
+POSTGRES_PORT=15433
 ```
 
 Use the host TLS proxy to route `app.example.com` to `127.0.0.1:18080` and `staging.example.com` to `127.0.0.1:18081`. Never share production credentials or databases with staging.
@@ -94,10 +105,11 @@ Run inside the target checkout:
 ```powershell
 git fetch origin
 git pull --ff-only origin <branch>
+docker compose --env-file .env --profile ops run --rm --build migrate
+docker compose --env-file .env --profile ops run --rm seed
 docker compose --env-file .env up -d --build
 docker compose ps
 docker compose logs --tail 100 api
-yarn workspace @vps-template/api seed
 ```
 
 Verify the final domain, `/health`, `/api/docs`, catalog browsing, login/register, add to cart, checkout, orders, and admin product management.

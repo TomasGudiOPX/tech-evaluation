@@ -24,19 +24,32 @@ understand -> specify -> implement -> verify -> review -> staging -> production 
 
 ## Local Setup
 
-From the repository root:
+From the repository root, the full Docker run is:
 
 ```powershell
 corepack enable
 yarn install --immutable
 Copy-Item .env.example .env
-yarn workspace @vps-template/api prisma:generate
-yarn workspace @vps-template/api seed
+docker compose --env-file .env --profile ops run --rm --build migrate
+docker compose --env-file .env --profile ops run --rm seed
 docker compose --env-file .env up -d --build
 Invoke-WebRequest http://localhost:8080/health
 ```
 
-The stack binds to `127.0.0.1` by default. Open `http://localhost:8080` locally. Stop it with `docker compose down`; do not use `--volumes` unless intentionally removing local data.
+The stack binds HTTP and PostgreSQL to `127.0.0.1` by default. Open `http://localhost:8080` locally. Stop it with `docker compose --env-file .env down`; do not use `--volumes` unless intentionally removing local data.
+
+For split local development, keep only PostgreSQL in Docker and run API/web from the host:
+
+```powershell
+docker compose --env-file .env up -d db
+$env:DATABASE_URL="postgresql://app:app@localhost:5432/app"
+yarn workspace @vps-template/api prisma:generate
+yarn workspace @vps-template/api prisma migrate deploy
+yarn workspace @vps-template/api seed
+yarn workspace @vps-template/api dev
+```
+
+Run the web app in another terminal with `VITE_API_BASE_URL=http://localhost:3000/api` and `yarn workspace @vps-template/web dev`.
 
 The source checks for the evaluation project are:
 
@@ -160,13 +173,15 @@ Protect `main` with pull requests and successful checks. Do not deploy unreviewe
 
 ## Staging and Production
 
-Staging and production are separate Compose projects on the VPS. They have separate checkouts, `.env` files, Compose names, loopback ports, databases, volumes, domains, and backups.
+Staging and production are separate Compose projects on the VPS. They are not separate Docker Compose `dev`, `qa`, or `prod` profiles. They have separate checkouts, `.env` files, Compose names, loopback ports, databases, volumes, domains, and backups. The only Compose profile is `ops`, used for one-off database migration and seed jobs.
 
 Deploy only the target branch in its matching directory:
 
 ```powershell
 git fetch origin
 git pull --ff-only origin <branch>
+docker compose --env-file .env --profile ops run --rm --build migrate
+docker compose --env-file .env --profile ops run --rm seed
 docker compose --env-file .env up -d --build
 docker compose ps
 docker compose logs --tail 100 api

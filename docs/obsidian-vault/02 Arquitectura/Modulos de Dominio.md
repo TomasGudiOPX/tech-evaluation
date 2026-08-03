@@ -20,6 +20,10 @@ Posee `Cart` y `CartItem` del usuario autenticado. Sus mutaciones requieren logi
 
 Posee `Order`, `OrderItem` e idempotencia. Mantiene snapshots de precio/cantidad y limita historial al propietario.
 
+## Operacion Docker
+
+Compose ejecuta `proxy`, `web`, `api` y `db` como servicios persistentes. No hay perfiles `dev`, `qa` o `prod`; staging y produccion son instancias separadas por branch, checkout, `.env`, `COMPOSE_PROJECT_NAME`, puertos, base de datos, credenciales y dominio. El perfil `ops` contiene solo trabajos puntuales: `migrate` aplica Prisma migrations y `seed` carga datos deterministas despues de migrar.
+
 ## API prevista
 
 - Publica: `GET /products`, `GET /products/:id`.

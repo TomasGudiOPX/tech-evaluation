@@ -9,6 +9,7 @@
 | Production | `main` | VPS | Live application |
 
 Do not create a VPS frontend/backend pair for every developer. The repository already contains both applications; each VPS environment runs one complete Compose project from a separate checkout or worktree.
+The project does not use Docker Compose `dev`, `qa`, or `prod` profiles. Environment separation comes from checkouts, branches, `.env` files, `COMPOSE_PROJECT_NAME`, ports, database names, credentials, domains, and backups. The only Compose profile is `ops`, which runs database migration and seed jobs without starting them as long-lived services.
 
 ## GitHub Workflow
 
@@ -49,6 +50,8 @@ HTTP_PORT=18080
 POSTGRES_DB=shopping_cart_production
 POSTGRES_USER=shopping_cart_production
 POSTGRES_PASSWORD=<unique-secret>
+POSTGRES_BIND_ADDRESS=127.0.0.1
+POSTGRES_PORT=15432
 
 # staging/.env
 COMPOSE_PROJECT_NAME=shopping-cart-staging
@@ -57,7 +60,11 @@ HTTP_PORT=18081
 POSTGRES_DB=shopping_cart_staging
 POSTGRES_USER=shopping_cart_staging
 POSTGRES_PASSWORD=<different-unique-secret>
+POSTGRES_BIND_ADDRESS=127.0.0.1
+POSTGRES_PORT=15433
 ```
+
+Keep `POSTGRES_BIND_ADDRESS=127.0.0.1` unless there is a specific, reviewed reason to expose the database beyond the host.
 
 ## Domain Routing
 
@@ -82,10 +89,11 @@ Run inside the target directory:
 ```powershell
 git fetch origin
 git pull --ff-only origin <branch>
+docker compose --env-file .env --profile ops run --rm --build migrate
+docker compose --env-file .env --profile ops run --rm seed
 docker compose --env-file .env up -d --build
 docker compose ps
 docker compose logs --tail 100 api
-yarn workspace @vps-template/api seed
 ```
 
 Verify the final domain, `https://<domain>/health`, `https://<domain>/api/docs`, and the core shopping workflow. Record the deployed commit with `git rev-parse HEAD` in the release note or deployment record.

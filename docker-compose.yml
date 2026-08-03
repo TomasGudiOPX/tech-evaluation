@@ -47,6 +47,38 @@ services:
     restart: unless-stopped
     networks: [app-network]
 
+  migrate:
+    profiles: ["ops"]
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: api-tools
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["yarn", "workspace", "@vps-template/api", "prisma", "migrate", "deploy"]
+    restart: "no"
+    networks: [app-network]
+
+  seed:
+    profiles: ["ops"]
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: api-tools
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      ADMIN_SEED_EMAIL: ${ADMIN_SEED_EMAIL:-}
+      ADMIN_SEED_PASSWORD: ${ADMIN_SEED_PASSWORD:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["yarn", "workspace", "@vps-template/api", "seed"]
+    restart: "no"
+    networks: [app-network]
+
   db:
     image: postgres:16-alpine
     environment:
@@ -58,6 +90,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    ports:
+      - "${POSTGRES_BIND_ADDRESS:-127.0.0.1}:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped

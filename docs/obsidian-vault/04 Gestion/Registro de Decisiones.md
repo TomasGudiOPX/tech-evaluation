@@ -19,3 +19,7 @@ tags: [adr, decisiones]
 ## ADR-004 - Stitch como referencia visual adaptativa
 
 **Aprobado.** `stitch_minimalist_retail_showcase` guia el lenguaje UI/UX, pero no es fuente de verdad. La app adapta jerarquia, espaciado, imagenes y tono minimalista a los endpoints, datos y alcance de este proyecto.
+
+## ADR-005 - Entornos por configuracion y perfil operativo
+
+**Aprobado.** No se crean perfiles Docker `dev`, `qa` o `prod` porque staging y produccion se separan por checkout, branch, `.env`, `COMPOSE_PROJECT_NAME`, puertos, base de datos, credenciales y dominio. Compose mantiene solo el perfil `ops` para tareas puntuales `migrate` y `seed`, ejecutadas antes de levantar el stack persistente.

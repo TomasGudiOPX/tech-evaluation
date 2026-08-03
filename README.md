@@ -51,29 +51,41 @@ browser -> nginx proxy -> Vite React static app
 
 ## Local Development
 
-Use Node 22 with Corepack:
+Use Node 22 with Corepack. For a split local run, start only PostgreSQL with Compose, then run the API and web dev servers from the host:
 
 ```powershell
 corepack enable
 yarn install --immutable
 Copy-Item .env.example .env
+docker compose --env-file .env up -d db
+$env:DATABASE_URL="postgresql://app:app@localhost:5432/app"
 yarn workspace @vps-template/api prisma:generate
+yarn workspace @vps-template/api prisma migrate deploy
 yarn workspace @vps-template/api seed
 yarn workspace @vps-template/api dev
+```
+
+In another terminal:
+
+```powershell
+$env:VITE_API_BASE_URL="http://localhost:3000/api"
 yarn workspace @vps-template/web dev
 ```
 
-The web app calls `/api` by default. For a split local run, set `VITE_API_BASE_URL=http://localhost:3000/api` for the web process.
+Open the Vite app at `http://localhost:5173`. The Docker database is bound to `127.0.0.1` by default through `POSTGRES_BIND_ADDRESS` and `POSTGRES_PORT`.
 
 ## Docker Run
 
+The Compose file does not define separate `dev`, `qa`, or `prod` profiles. Development, staging, and production are separate environment instances using the same Compose file with different `.env` values, branches, project names, ports, database names, credentials, and domains. The only Compose profile is `ops`, used for one-off migration and seed jobs.
+
 ```powershell
 Copy-Item .env.example .env
+docker compose --env-file .env --profile ops run --rm --build migrate
+docker compose --env-file .env --profile ops run --rm seed
 docker compose --env-file .env up -d --build
-yarn workspace @vps-template/api seed
 ```
 
-Open `http://localhost:8080`, verify `http://localhost:8080/health`, and inspect API docs at `http://localhost:8080/api/docs`.
+Open `http://localhost:8080`, verify `http://localhost:8080/health`, and inspect API docs at `http://localhost:8080/api/docs`. Stop the stack with `docker compose --env-file .env down`; add `--volumes` only when intentionally deleting local PostgreSQL data.
 
 ## Verification
 

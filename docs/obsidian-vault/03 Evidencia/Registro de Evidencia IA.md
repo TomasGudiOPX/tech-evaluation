@@ -57,3 +57,16 @@ Este registro alimenta `INFORME_IA.md`. No registrar actividad que no haya ocurr
 - **Motivo tecnico:** Migrar a Next.js en esta fase aumentaria riesgo sin mejorar los requisitos ya implementados.
 - **Prueba asociada:** Lint, builds de contratos/API/web, Prisma generate, tests API, build raiz y validacion Compose.
 - **Enlaces:** [[03 Evidencia/Evidencia - Entrega Final]], `openspec/changes/finalize-delivery-docs-ci-polish`.
+
+## AI-2026-08-03-06 - Arranque Docker y documentacion operativa
+
+- **Vertical / requisito:** NFR-01, NFR-02, AI-03.
+- **Herramienta o agente:** Codex con revision de Compose, Dockerfiles, README, guias VPS y ejecucion local Docker.
+- **Objetivo:** Corregir el proceso reproducible de arranque para Docker local, staging y produccion.
+- **Prompt resumido o enlace:** El usuario pidio revisar perfiles Docker y documentacion de arranque, luego actualizar README, INFORME_IA y docs.
+- **Salida recibida:** `docker-compose.yml` con perfil `ops` para `migrate`/`seed`, Dockerfile API con target `api-tools`, `.env.example` con Postgres loopback configurable y guias actualizadas.
+- **Revision humana:** El usuario pidio agregar tambien la documentacion del vault antes del commit.
+- **Correccion o rechazo:** No se documentaron perfiles `dev`, `qa` o `prod` inexistentes; se dejo el modelo real de entornos por configuracion y un perfil operativo `ops`.
+- **Motivo tecnico:** Las migraciones deben ejecutarse antes del seed y sin depender del host `DATABASE_URL` contra el `db` interno de Compose.
+- **Prueba asociada:** Compose config, build raiz, build Docker del target `api-tools`, build Docker runtime API, `/health`, `/api/products` y `/api/docs`.
+- **Enlaces:** [[03 Evidencia/Evidencia - Entrega Final]], [[04 Gestion/Registro de Decisiones]].
