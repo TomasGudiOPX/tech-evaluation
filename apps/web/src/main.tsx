@@ -1,13 +1,13 @@
 import { createRoot } from 'react-dom/client';
 import { AdminView } from './components/AdminView';
-import { AuthPanel } from './components/AuthPanel';
+import { AuthModal } from './components/AuthModal';
 import { CartView } from './components/CartView';
 import { CatalogView } from './components/CatalogView';
 import { CheckoutView } from './components/CheckoutView';
 import { Header } from './components/Header';
-import { NoticeBanner } from './components/NoticeBanner';
 import { OrdersView } from './components/OrdersView';
 import { ProductDetailView } from './components/ProductDetailView';
+import { ToastManager } from './components/ToastManager';
 import { useCartState } from './hooks/useCartState';
 import './styles.css';
 
@@ -32,7 +32,10 @@ function App() {
     adminForm,
     setAdminForm,
     editingProductId,
-    notice,
+    isAuthOpen,
+    setIsAuthOpen,
+    toasts,
+    removeToast,
     error,
     isBusy,
     authenticate,
@@ -45,7 +48,6 @@ function App() {
     retireProduct,
     startEditing,
     cancelEditing,
-    clearNotice,
   } = useCartState();
 
   return (
@@ -56,22 +58,24 @@ function App() {
         cartCount={cartCount}
         user={user}
         logout={logout}
+        onOpenAuth={() => setIsAuthOpen(true)}
       />
 
-      <NoticeBanner notice={notice} error={error} onClear={clearNotice} />
+      <ToastManager toasts={toasts} onDismiss={removeToast} />
 
-      {!user && (
-        <AuthPanel
-          authMode={authMode}
-          setAuthMode={setAuthMode}
-          email={email}
-          setEmail={setEmail}
-          password={password}
-          setPassword={setPassword}
-          isBusy={isBusy}
-          authenticate={authenticate}
-        />
-      )}
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        authMode={authMode}
+        setAuthMode={setAuthMode}
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        isBusy={isBusy}
+        error={error}
+        authenticate={authenticate}
+      />
 
       {view === 'catalog' && (
         <CatalogView

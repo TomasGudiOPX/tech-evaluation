@@ -1,14 +1,30 @@
-import type { Product } from '@vps-template/contracts/products';
+import type { Product, ProductCategory } from '@vps-template/contracts/products';
 import type { ProductForm } from '../types';
+
+export const productCategoryLabels: Record<ProductCategory, string> = {
+  workspace: 'Workspace',
+  bags: 'Bags',
+  kitchen: 'Kitchen',
+  decor: 'Decor',
+  wellness: 'Wellness',
+  travel: 'Travel',
+};
+
+export const productCategoryOptions = Object.entries(productCategoryLabels) as Array<[ProductCategory, string]>;
 
 export function money(cents: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
+}
+
+export function categoryLabel(category: ProductCategory): string {
+  return productCategoryLabels[category];
 }
 
 export function blankProductForm(): ProductForm {
   return {
     name: '',
     description: '',
+    category: 'workspace',
     priceCents: '',
     imageUrl: '',
     stock: '',
@@ -20,6 +36,7 @@ export function productForm(product?: Product): ProductForm {
     ? {
         name: product.name,
         description: product.description,
+        category: product.category,
         priceCents: String(product.priceCents),
         imageUrl: product.imageUrl,
         stock: String(product.stock),
@@ -31,6 +48,7 @@ export function parseProductForm(form: ProductForm) {
   return {
     name: form.name,
     description: form.description,
+    category: form.category,
     priceCents: Number(form.priceCents),
     imageUrl: form.imageUrl,
     stock: Number(form.stock),

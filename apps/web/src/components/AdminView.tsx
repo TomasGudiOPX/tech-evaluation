@@ -1,7 +1,7 @@
 import { FormEvent } from 'react';
 import type { Product } from '@vps-template/contracts/products';
 import type { ProductForm } from '../types';
-import { money } from '../utils/formatters';
+import { categoryLabel, money, productCategoryOptions } from '../utils/formatters';
 
 interface AdminViewProps {
   products: Product[];
@@ -29,7 +29,7 @@ export function AdminView({
   const isEditing = Boolean(editingProductId);
 
   return (
-    <section className="admin-section">
+    <section className="admin-section view-transition">
       <div className="admin-header">
         <span className="eyebrow">Admin Console</span>
         <h1 className="panel-title">Product Catalog Management</h1>
@@ -92,6 +92,21 @@ export function AdminView({
 
           <div className="form-two-cols">
             <label className="form-field">
+              <span>Category</span>
+              <select
+                value={adminForm.category}
+                onChange={(e) => setAdminForm({ ...adminForm, category: e.target.value as ProductForm['category'] })}
+                required
+              >
+                {productCategoryOptions.map(([category, label]) => (
+                  <option key={category} value={category}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="form-field">
               <span>Price (in Cents)</span>
               <input
                 type="number"
@@ -140,6 +155,7 @@ export function AdminView({
 
                   <div className="admin-product-info">
                     <strong>{product.name}</strong>
+                    <span className="admin-product-category">{categoryLabel(product.category)}</span>
                     <span className="admin-product-price">{money(product.priceCents)}</span>
                   </div>
 

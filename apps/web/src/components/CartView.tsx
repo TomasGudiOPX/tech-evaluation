@@ -15,7 +15,7 @@ export function CartView({ cart, setView, onUpdateQuantity, onRemoveItem, isBusy
   const isEmpty = items.length === 0;
 
   return (
-    <section className="cart-section">
+    <section className="cart-section view-transition">
       <div className="cart-layout">
         <div className="cart-main-panel">
           <div className="panel-header">

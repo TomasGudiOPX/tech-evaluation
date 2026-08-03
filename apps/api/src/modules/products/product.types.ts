@@ -1,9 +1,10 @@
-import type { Product } from '@vps-template/contracts/products';
+import type { Product, ProductCategory } from '@vps-template/contracts/products';
 
 export type ProductRow = {
   id: string;
   name: string;
   description: string;
+  category: ProductCategory;
   priceCents: number;
   imageUrl: string;
   stock: number;

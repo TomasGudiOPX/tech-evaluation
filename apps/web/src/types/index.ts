@@ -1,7 +1,7 @@
 import type { AuthUser } from '@vps-template/contracts/auth';
 import type { Cart } from '@vps-template/contracts/cart';
 import type { Order } from '@vps-template/contracts/orders';
-import type { Product } from '@vps-template/contracts/products';
+import type { Product, ProductCategory } from '@vps-template/contracts/products';
 
 export type View = 'catalog' | 'detail' | 'cart' | 'checkout' | 'orders' | 'admin';
 
@@ -14,12 +14,21 @@ export type ApiError = {
 export type ProductForm = {
   name: string;
   description: string;
+  category: ProductCategory;
   priceCents: string;
   imageUrl: string;
   stock: string;
 };
 
 export type AuthMode = 'login' | 'register';
+
+export type ToastType = 'info' | 'success' | 'error';
+
+export type ToastMessage = {
+  id: string;
+  type: ToastType;
+  message: string;
+};
 
 export type AppState = {
   view: View;
@@ -36,7 +45,7 @@ export type AppState = {
   password: string;
   adminForm: ProductForm;
   editingProductId: string | null;
-  notice: string;
-  error: string;
+  isAuthOpen: boolean;
+  toasts: ToastMessage[];
   isBusy: boolean;
 };

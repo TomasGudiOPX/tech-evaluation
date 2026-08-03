@@ -9,6 +9,7 @@ const activeProduct: ProductRow = {
   id: '00000000-0000-4000-8000-000000000001',
   name: 'Minimal Desk Lamp',
   description: 'Warm adjustable lamp for focused work sessions.',
+  category: 'workspace',
   priceCents: 4599,
   imageUrl: 'https://example.com/lamp.jpg',
   stock: 18,
@@ -63,6 +64,7 @@ describe('ProductService', () => {
     await service.create({
       name: 'Desk Mat',
       description: 'Felt mat for a compact desk.',
+      category: 'workspace',
       priceCents: 1999,
       imageUrl: 'https://example.com/mat.jpg',
       stock: 10,
@@ -71,6 +73,7 @@ describe('ProductService', () => {
     expect(repository.create).toHaveBeenCalledWith({
       name: 'Desk Mat',
       description: 'Felt mat for a compact desk.',
+      category: 'workspace',
       priceCents: 1999,
       imageUrl: 'https://example.com/mat.jpg',
       stock: 10,
@@ -84,6 +87,7 @@ describe('ProductService', () => {
       service.create({
         name: '',
         description: '',
+        category: 'invalid-category',
         priceCents: 0,
         imageUrl: 'not-a-url',
         stock: -1,

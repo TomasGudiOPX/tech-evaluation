@@ -26,10 +26,20 @@ model User {
   @@map("users")
 }
 
+enum ProductCategory {
+  workspace
+  bags
+  kitchen
+  decor
+  wellness
+  travel
+}
+
 model Product {
   id          String   @id @default(uuid()) @db.Uuid
   name        String
   description String
+  category    ProductCategory @default(workspace)
   priceCents  Int      @map("price_cents")
   imageUrl    String   @map("image_url")
   stock       Int

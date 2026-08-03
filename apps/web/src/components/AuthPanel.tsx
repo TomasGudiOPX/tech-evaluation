@@ -9,6 +9,7 @@ interface AuthPanelProps {
   password: string;
   setPassword: (password: string) => void;
   isBusy: boolean;
+  error?: string;
   authenticate: (event: FormEvent<HTMLFormElement>) => Promise<void>;
 }
 
@@ -20,10 +21,13 @@ export function AuthPanel({
   password,
   setPassword,
   isBusy,
+  error,
   authenticate,
 }: AuthPanelProps) {
+  const isError = Boolean(error);
+
   return (
-    <section className="auth-section" aria-label="Authentication">
+    <section className="auth-section view-transition" aria-label="Authentication">
       <div className="auth-hero">
         <span className="eyebrow">Secure Account Access</span>
         <h1>Experience seamless shopping & instant checkout</h1>
@@ -45,7 +49,7 @@ export function AuthPanel({
         </div>
       </div>
 
-      <div className="auth-card">
+      <div className={`auth-card ${isError ? 'shake-error' : ''}`}>
         <div className="segmented-tabs">
           <button
             className={`tab-btn ${authMode === 'login' ? 'active' : ''}`}
@@ -84,8 +88,12 @@ export function AuthPanel({
               onChange={(event) => setPassword(event.target.value)}
               type="password"
               value={password}
+              minLength={authMode === 'register' ? 8 : 1}
               required
             />
+            {authMode === 'register' && (
+              <span className="form-hint">Must be at least 8 characters long</span>
+            )}
           </label>
 
           <button className="primary-btn submit-btn" disabled={isBusy} type="submit">

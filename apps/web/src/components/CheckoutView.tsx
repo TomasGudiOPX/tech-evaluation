@@ -14,7 +14,7 @@ export function CheckoutView({ cart, setView, onCheckout, isBusy }: CheckoutView
   const totalCents = cart?.totalCents ?? 0;
 
   return (
-    <section className="checkout-section">
+    <section className="checkout-section view-transition">
       <div className="checkout-layout">
         <div className="checkout-main-panel">
           <div className="panel-header">

@@ -4,7 +4,7 @@ import type { Cart } from '@vps-template/contracts/cart';
 import type { Order } from '@vps-template/contracts/orders';
 import type { Product } from '@vps-template/contracts/products';
 import { request, tokenStorageKey } from '../services/api';
-import type { AuthMode, ProductForm, View } from '../types';
+import type { AuthMode, ProductForm, ToastMessage, ToastType, View } from '../types';
 import { blankProductForm, errorMessage, newIdempotencyKey, parseProductForm, productForm } from '../utils/formatters';
 
 export function useCartState() {
@@ -20,7 +20,8 @@ export function useCartState() {
   const [password, setPassword] = useState('correct-password');
   const [adminForm, setAdminForm] = useState<ProductForm>(blankProductForm());
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
-  const [notice, setNotice] = useState('Loading catalog...');
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [error, setError] = useState('');
   const [isBusy, setIsBusy] = useState(false);
 
@@ -31,19 +32,36 @@ export function useCartState() {
 
   const cartCount = cart?.items.reduce((total, item) => total + item.quantity, 0) ?? 0;
 
+  function addToast(message: string, type: ToastType = 'info') {
+    const id = newIdempotencyKey();
+    setToasts((prev) => [...prev, { id, message, type }]);
+
+    setTimeout(() => {
+      removeToast(id);
+    }, 3500);
+  }
+
+  function removeToast(id: string) {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }
+
   async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
     return request<T>(path, options, token);
   }
 
-  async function withFeedback(action: () => Promise<void>, successMessage: string) {
+  async function withFeedback(action: () => Promise<void>, successToast?: string) {
     setIsBusy(true);
     setError('');
 
     try {
       await action();
-      setNotice(successMessage);
+      if (successToast) {
+        addToast(successToast, 'success');
+      }
     } catch (caught) {
-      setError(errorMessage(caught));
+      const msg = errorMessage(caught);
+      setError(msg);
+      addToast(msg, 'error');
     } finally {
       setIsBusy(false);
     }
@@ -55,7 +73,6 @@ export function useCartState() {
     });
     setProducts(data.products);
     setSelectedProductId((current) => current ?? data.products[0]?.id ?? null);
-    setNotice(data.products.length > 0 ? 'Catalog ready' : 'Seed products to start');
   }
 
   async function loadCart() {
@@ -84,7 +101,7 @@ export function useCartState() {
   }
 
   useEffect(() => {
-    void withFeedback(loadProducts, 'Catalog ready');
+    void withFeedback(loadProducts);
   }, []);
 
   useEffect(() => {
@@ -102,7 +119,7 @@ export function useCartState() {
       localStorage.setItem(tokenStorageKey, data.accessToken);
       setToken(data.accessToken);
       setUser(data.user);
-      setView('catalog');
+      setIsAuthOpen(false);
     }, authMode === 'login' ? 'Signed in successfully' : 'Account created successfully');
   }
 
@@ -112,20 +129,19 @@ export function useCartState() {
     setUser(null);
     setCart(null);
     setOrders([]);
-    setNotice('Signed out');
+    addToast('Signed out', 'info');
   }
 
   async function addToCart(productId: string, quantity = 1) {
     if (!user) {
-      setView('catalog');
-      setError('Please sign in to add products to your cart.');
+      setIsAuthOpen(true);
+      addToast('Please sign in to add products to your cart.', 'info');
       return;
     }
 
     await withFeedback(async () => {
       setCart((await apiRequest<{ cart: Cart }>('/cart/items', { method: 'POST', body: JSON.stringify({ productId, quantity }) })).cart);
-      setView('cart');
-    }, 'Product added to cart');
+    }, 'Added to cart');
   }
 
   async function updateCartItem(productId: string, quantity: number) {
@@ -193,11 +209,6 @@ export function useCartState() {
     setAdminForm(blankProductForm());
   }
 
-  function clearNotice() {
-    setNotice('');
-    setError('');
-  }
-
   return {
     view,
     setView,
@@ -218,7 +229,11 @@ export function useCartState() {
     adminForm,
     setAdminForm,
     editingProductId,
-    notice,
+    isAuthOpen,
+    setIsAuthOpen,
+    toasts,
+    removeToast,
+    addToast,
     error,
     isBusy,
     authenticate,
@@ -231,7 +246,6 @@ export function useCartState() {
     retireProduct,
     startEditing,
     cancelEditing,
-    clearNotice,
   };
 }
 
