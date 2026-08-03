@@ -7,6 +7,10 @@
     "./projects": {
       "types": "./dist/projects.d.ts",
       "default": "./dist/projects.js"
+    },
+    "./auth": {
+      "types": "./dist/auth.d.ts",
+      "default": "./dist/auth.js"
     }
   },
   "scripts": {

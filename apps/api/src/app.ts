@@ -1,47 +1,32 @@
-import cors from '@fastify/cors';
-import Fastify from 'fastify';
-import type { Pool } from 'pg';
-import { registerMcpRoutes } from './engine/mcp/mcp.routes.js';
-import { ProjectRepository } from './modules/projects/project.repository.js';
-import { registerProjectRoutes } from './modules/projects/project.routes.js';
-import { ProjectService } from './modules/projects/project.service.js';
+import 'reflect-metadata';
+
+import { Module } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
+import { AuthModule } from './modules/auth/auth.module.js';
+import { HealthController } from './health.controller.js';
 import type { AppConfig } from './platform/config.js';
+import { AppExceptionFilter } from './platform/app-exception.filter.js';
+import { PlatformModule } from './platform/platform.module.js';
 
-export async function createApp(config: AppConfig, pool: Pool) {
-  const app = Fastify({ logger: true });
-  const projectService = new ProjectService(new ProjectRepository(pool));
+@Module({})
+class AppModule {
+  static forConfig(config: AppConfig) {
+    return {
+      module: AppModule,
+      imports: [PlatformModule.forConfig(config), AuthModule],
+      controllers: [HealthController],
+    };
+  }
+}
 
-  await app.register(cors, { origin: config.corsOrigin });
-  await projectService.initialize();
-
-  app.get('/health', async (_request, reply) => {
-    try {
-      await pool.query('SELECT 1');
-      return { status: 'ok', database: 'connected' };
-    } catch (error) {
-      reply.code(503);
-      return {
-        status: 'unavailable',
-        database: 'disconnected',
-        error: error instanceof Error ? error.message : 'Unknown database error',
-      };
-    }
+export async function createApp(config: AppConfig): Promise<NestFastifyApplication> {
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule.forConfig(config), new FastifyAdapter(), {
+    logger: true,
   });
 
-  app.get('/api/config', async () => ({
-    service: 'vps-template-api',
-    environment: config.nodeEnv,
-  }));
-
-  registerProjectRoutes(app, projectService);
-  await registerMcpRoutes(app, {
-    apiToken: config.mcpApiToken,
-    projectService,
-  });
-
-  app.addHook('onClose', async () => {
-    await pool.end();
-  });
+  app.enableCors({ origin: config.corsOrigin });
+  app.useGlobalFilters(new AppExceptionFilter());
 
   return app;
 }

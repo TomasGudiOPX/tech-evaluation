@@ -1,6 +1,14 @@
-# VPS Project Template
+# Shopping Cart Technical Evaluation
 
-This is a small starting point for client projects that need a React frontend, a Node API, and PostgreSQL on one VPS.
+This repository contains a full-stack shopping-cart application for the technical evaluation in `evaluation.md`.
+
+## Technical Decision
+
+The implementation will use the suggested evaluation stack: Next.js for the web app, NestJS for the API, PostgreSQL for persistence, and Prisma for ORM/migrations.
+
+This replaces the original Vite/Fastify template deliberately. The evaluation allows any Node.js/TypeScript stack if justified, but choosing the suggested stack reduces review friction and makes the learning goal explicit: show a small modular monolith with framework-level boundaries, documented REST contracts, versioned migrations, and traceable AI-assisted development.
+
+Identity and RBAC use email/password authentication with JWT access tokens. Public registration creates only `customer` users; administrator access is created through environment-controlled seed credentials, not request input.
 
 Read [docs/VPS-DOC.md](docs/VPS-DOC.md) for the human deployment and usage guide. [docs/README.md](docs/README.md) indexes the full documentation. Coding agents should follow [AGENT.md](AGENT.md).
 
