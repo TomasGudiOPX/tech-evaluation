@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { AdminView } from './components/AdminView';
+import { AdminApp } from './components/AdminApp';
 import { AuthModal } from './components/AuthModal';
 import { CartView } from './components/CartView';
 import { CatalogView } from './components/CatalogView';
@@ -16,7 +16,6 @@ function App() {
     view,
     setView,
     products,
-    selectedProductId,
     setSelectedProductId,
     selectedProduct,
     cart,
@@ -29,9 +28,6 @@ function App() {
     setEmail,
     password,
     setPassword,
-    adminForm,
-    setAdminForm,
-    editingProductId,
     isAuthOpen,
     setIsAuthOpen,
     toasts,
@@ -44,10 +40,6 @@ function App() {
     updateCartItem,
     removeCartItem,
     checkout,
-    saveProduct,
-    retireProduct,
-    startEditing,
-    cancelEditing,
   } = useCartState();
 
   return (
@@ -108,32 +100,13 @@ function App() {
         />
       )}
 
-      {view === 'checkout' && (
-        <CheckoutView
-          cart={cart}
-          setView={setView}
-          onCheckout={checkout}
-          isBusy={isBusy}
-        />
-      )}
+      {view === 'checkout' && <CheckoutView cart={cart} setView={setView} onCheckout={checkout} isBusy={isBusy} />}
 
       {view === 'orders' && <OrdersView orders={orders} />}
-
-      {view === 'admin' && user?.role === 'admin' && (
-        <AdminView
-          products={products}
-          adminForm={adminForm}
-          setAdminForm={setAdminForm}
-          editingProductId={editingProductId}
-          onSaveProduct={saveProduct}
-          onRetireProduct={retireProduct}
-          onStartEditing={startEditing}
-          onCancelEditing={cancelEditing}
-          isBusy={isBusy}
-        />
-      )}
     </main>
   );
 }
 
-createRoot(document.getElementById('root')!).render(<App />);
+createRoot(document.getElementById('root')!).render(
+  window.location.pathname.startsWith('/admin') ? <AdminApp /> : <App />,
+);

@@ -234,7 +234,8 @@ nav {
   gap: 6px;
 }
 
-nav button {
+nav button,
+nav a {
   position: relative;
   padding: 8px 18px;
   border-radius: var(--radius-full);
@@ -244,17 +245,20 @@ nav button {
   transition: var(--transition);
 }
 
-nav button:hover {
+nav button:hover,
+nav a:hover {
   color: var(--text-primary);
   background: var(--bg-surface-subtle);
   transform: translateY(-1px);
 }
 
-nav button:active {
+nav button:active,
+nav a:active {
   transform: scale(0.95);
 }
 
-nav button.active {
+nav button.active,
+nav a.active {
   background: var(--bg-dark);
   color: var(--text-on-dark);
   box-shadow: var(--shadow-sm);
@@ -1677,6 +1681,53 @@ nav button.active {
   width: 100%;
 }
 
+.admin-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px clamp(16px, 4vw, 48px);
+  background: var(--bg-dark);
+  color: var(--text-on-dark);
+}
+
+.admin-topbar .brand-title {
+  color: var(--text-on-dark);
+  font-size: 1.05rem;
+}
+
+.admin-topbar .ghost-btn {
+  color: var(--text-on-dark);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.admin-topbar .ghost-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.admin-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.admin-topbar .user-email {
+  font-size: 0.88rem;
+  opacity: 0.9;
+}
+
+.admin-loading {
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
 .admin-header {
   margin-bottom: 28px;
 }
@@ -1701,6 +1752,12 @@ nav button.active {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
 }
 
 .form-card-header {
@@ -1837,6 +1894,9 @@ nav button.active {
     grid-template-columns: 1fr;
   }
   .summary-sidebar {
+    position: static;
+  }
+  .admin-form-card {
     position: static;
   }
 }

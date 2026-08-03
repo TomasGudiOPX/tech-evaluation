@@ -3,7 +3,7 @@ import type { Cart } from '@vps-template/contracts/cart';
 import type { Order } from '@vps-template/contracts/orders';
 import type { Product, ProductCategory } from '@vps-template/contracts/products';
 
-export type View = 'catalog' | 'detail' | 'cart' | 'checkout' | 'orders' | 'admin';
+export type View = 'catalog' | 'detail' | 'cart' | 'checkout' | 'orders';
 
 export type ApiError = {
   code?: string;
@@ -46,6 +46,7 @@ export type AppState = {
   adminForm: ProductForm;
   editingProductId: string | null;
   isAuthOpen: boolean;
+  isAuthReady: boolean;
   toasts: ToastMessage[];
   isBusy: boolean;
 };

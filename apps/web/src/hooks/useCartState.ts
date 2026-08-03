@@ -29,6 +29,7 @@ export function useCartState() {
   const [adminForm, setAdminForm] = useState<ProductForm>(blankProductForm());
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isAuthReady, setIsAuthReady] = useState(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [error, setError] = useState('');
   const [isBusy, setIsBusy] = useState(false);
@@ -113,7 +114,7 @@ export function useCartState() {
   }, []);
 
   useEffect(() => {
-    void loadProfile();
+    void loadProfile().finally(() => setIsAuthReady(true));
   }, [token]);
 
   async function authenticate(event: FormEvent<HTMLFormElement>) {
@@ -255,6 +256,7 @@ export function useCartState() {
     editingProductId,
     isAuthOpen,
     setIsAuthOpen,
+    isAuthReady,
     toasts,
     removeToast,
     addToast,
