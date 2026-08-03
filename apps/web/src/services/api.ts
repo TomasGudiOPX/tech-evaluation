@@ -6,7 +6,7 @@ export const tokenStorageKey = 'shopping-cart-token';
 export async function request<T>(path: string, options: RequestInit = {}, token?: string): Promise<T> {
   const headers = new Headers(options.headers);
 
-  if (!(options.body instanceof FormData)) {
+  if (options.body != null && !(options.body instanceof FormData)) {
     headers.set('Content-Type', headers.get('Content-Type') ?? 'application/json');
   }
 
