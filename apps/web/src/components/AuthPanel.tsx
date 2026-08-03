@@ -1,5 +1,6 @@
 import { FormEvent } from 'react';
 import type { AuthMode } from '../types';
+import { DEMO_EMAIL, DEMO_PASSWORD } from '../utils/formatters';
 
 interface AuthPanelProps {
   authMode: AuthMode;
@@ -25,6 +26,8 @@ export function AuthPanel({
   authenticate,
 }: AuthPanelProps) {
   const isError = Boolean(error);
+  const isDemoEmail = email === DEMO_EMAIL;
+  const isDemoPassword = password === DEMO_PASSWORD;
 
   return (
     <section className="auth-section view-transition" aria-label="Authentication">
@@ -34,13 +37,31 @@ export function AuthPanel({
         <p>Sign in to unlock personalized carts, real-time stock sync, and full order history tracking.</p>
         <div className="auth-highlights">
           <div className="highlight-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
             <span>Idempotency Protected Checkout</span>
           </div>
           <div className="highlight-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
               <line x1="1" y1="10" x2="23" y2="10" />
             </svg>
@@ -73,6 +94,7 @@ export function AuthPanel({
             <input
               autoComplete="email"
               placeholder="customer@example.com"
+              className={isDemoEmail ? 'demo-value' : ''}
               onChange={(event) => setEmail(event.target.value)}
               type="email"
               value={email}
@@ -85,25 +107,24 @@ export function AuthPanel({
             <input
               autoComplete="current-password"
               placeholder="••••••••"
+              className={isDemoPassword ? 'demo-value' : ''}
               onChange={(event) => setPassword(event.target.value)}
               type="password"
               value={password}
               minLength={authMode === 'register' ? 8 : 1}
               required
             />
-            {authMode === 'register' && (
-              <span className="form-hint">Must be at least 8 characters long</span>
-            )}
+            {authMode === 'register' && <span className="form-hint">Must be at least 8 characters long</span>}
           </label>
 
+          <div className="demo-credentials">
+            <span className="demo-credentials-label">Demo login</span>
+            <code>{DEMO_EMAIL}</code>
+            <code>{DEMO_PASSWORD}</code>
+          </div>
+
           <button className="primary-btn submit-btn" disabled={isBusy} type="submit">
-            {isBusy ? (
-              <span className="btn-spinner"></span>
-            ) : authMode === 'login' ? (
-              'Sign In'
-            ) : (
-              'Create Account'
-            )}
+            {isBusy ? <span className="btn-spinner"></span> : authMode === 'login' ? 'Sign In' : 'Create Account'}
           </button>
         </form>
       </div>

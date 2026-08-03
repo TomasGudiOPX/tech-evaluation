@@ -12,6 +12,9 @@ export const productCategoryLabels: Record<ProductCategory, string> = {
 
 export const productCategoryOptions = Object.entries(productCategoryLabels) as Array<[ProductCategory, string]>;
 
+export const DEMO_EMAIL = 'customer@example.com';
+export const DEMO_PASSWORD = 'correct-password';
+
 export function money(cents: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
 }
