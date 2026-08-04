@@ -63,6 +63,14 @@ export class ProductService {
     return toProduct(await this.repository.retire(productId));
   }
 
+  async searchByName(query: string): Promise<Product[]> {
+    return (await this.repository.searchByName(query, 50)).map(toProduct);
+  }
+
+  async listFiltered(filters: { category?: string; maxPriceCents?: number; activeOnly?: boolean }): Promise<Product[]> {
+    return (await this.repository.listFiltered(filters, 100)).map(toProduct);
+  }
+
   private async ensureExists(id: string) {
     const product = await this.repository.findById(id);
 
