@@ -10,6 +10,7 @@ import { AuthModule } from './modules/auth/auth.module.js';
 import { CartModule } from './modules/cart/cart.module.js';
 import { OrderModule } from './modules/orders/order.module.js';
 import { ProductModule } from './modules/products/product.module.js';
+import { McpModule } from './engine/mcp/mcp.module.js';
 import { HealthController } from './health.controller.js';
 import { AppThrottlerGuard } from './platform/app-throttler.guard.js';
 import type { AppConfig } from './platform/config.js';
@@ -20,16 +21,20 @@ import { registerSecurity } from './platform/security.js';
 @Module({})
 class AppModule {
   static forConfig(config: AppConfig) {
+    const imports = [
+      PlatformModule.forConfig(config),
+      ThrottlerModule.forRoot([{ ttl: 60_000, limit: 300 }]),
+      AuthModule,
+      ProductModule,
+      CartModule,
+      OrderModule,
+    ];
+    if (config.mcpApiToken) {
+      imports.push(McpModule);
+    }
     return {
       module: AppModule,
-      imports: [
-        PlatformModule.forConfig(config),
-        ThrottlerModule.forRoot([{ ttl: 60_000, limit: 300 }]),
-        AuthModule,
-        ProductModule,
-        CartModule,
-        OrderModule,
-      ],
+      imports,
       controllers: [HealthController],
       providers: [{ provide: APP_GUARD, useClass: AppThrottlerGuard }],
     };

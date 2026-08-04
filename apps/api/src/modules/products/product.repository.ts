@@ -51,4 +51,22 @@ export class ProductRepository {
       data: { isActive: false },
     });
   }
+
+  async searchByName(query: string, take: number): Promise<ProductRow[]> {
+    return this.prisma.product.findMany({
+      where: { name: { contains: query, mode: 'insensitive' } },
+      take,
+    });
+  }
+
+  async listFiltered(
+    filters: { category?: string; maxPriceCents?: number; activeOnly?: boolean },
+    take: number,
+  ): Promise<ProductRow[]> {
+    const where: Record<string, unknown> = {};
+    if (filters.category) where.category = filters.category;
+    if (filters.maxPriceCents !== undefined) where.priceCents = { lte: filters.maxPriceCents };
+    if (filters.activeOnly !== false) where.isActive = true;
+    return this.prisma.product.findMany({ where, take });
+  }
 }
