@@ -20,6 +20,10 @@ Posee `Cart` y `CartItem` del usuario autenticado. Sus mutaciones requieren logi
 
 Posee `Order`, `OrderItem` e idempotencia. Mantiene snapshots de precio/cantidad y limita historial al propietario.
 
+## Projects
+
+`apps/api/src/modules/projects/` existe como scaffold vacio y no representa un modulo de negocio activo. Los modulos activos documentados son Auth, Products, Cart y Orders.
+
 ## Seguridad API
 
 Capa de transporte del API: `@fastify/helmet` aplica headers de seguridad a cada respuesta y `@nestjs/throttler` con `AppThrottlerGuard` rate-limita por IP respetando `X-Forwarded-For`. El exceso se mapea a HTTP 429 `{ code: 'RATE_LIMITED', message }` via `AppExceptionFilter` para mantener el envelope de errores.
