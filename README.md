@@ -21,7 +21,7 @@ The app keeps the pragmatic VPS template shape but implements the evaluation dom
 - Authenticated persistent cart with add, update, and remove.
 - Simulated checkout with required `Idempotency-Key`.
 - Atomic stock decrement, immutable order item snapshots, and order history.
-- Public product reviews plus authenticated customer create/update ownership.
+- Product-detail reviews with public listing and authenticated customer create/update ownership.
 - Swagger/OpenAPI documentation at `/api/docs`.
 
 ## API

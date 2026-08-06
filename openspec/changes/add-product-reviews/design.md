@@ -49,6 +49,12 @@ Authenticated customer writes:
 
 Controllers return response envelopes matching existing module style, for example `{ reviews }` and `{ review }`.
 
+Storefront behavior:
+
+- Product detail pages show public reviews below the product overview.
+- Signed-in customers can create or update their own review from the product detail page.
+- Visitors see reviews and are prompted to sign in before posting.
+
 ## Validation and Errors
 
 Shared contract schemas validate:
@@ -94,6 +100,7 @@ Required coverage:
 - Customer can update their own review.
 - Customer cannot update another customer's review and receives `REVIEW_NOT_FOUND`.
 - Product retirement preserves stored reviews but hides them from active-product review listing.
+- Product detail UI lists reviews and exposes create/update controls for authenticated customers.
 
 ## Traceability
 

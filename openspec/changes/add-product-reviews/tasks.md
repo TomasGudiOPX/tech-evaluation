@@ -42,3 +42,4 @@
 - [x] Update vault evidence with implementation paths, test results, and commit.
 - [x] Update `INFORME_IA.md` with review-slice evidence and corrections/rejections.
 - [x] Commit with a message referencing the product reviews OpenSpec change.
+- [x] Add product detail UI for listing, creating, and updating reviews.

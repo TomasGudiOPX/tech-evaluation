@@ -247,6 +247,7 @@ export function useCartState() {
     cartCount,
     orders,
     user,
+    token,
     authMode,
     setAuthMode,
     email,

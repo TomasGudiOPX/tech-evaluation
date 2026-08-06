@@ -116,9 +116,9 @@ En todos los casos la IA produjo el primer draft; el valor agregado humano fue a
 - **Contexto:** `openspec/changes/add-product-reviews` define resenas publicas para productos activos y mutaciones autenticadas.
 - **Objetivo:** implementar contrato, modelo, API, pruebas y evidencia sin mezclar reviews dentro de productos.
 - **Decision humana:** consumidor significa cliente autenticado; verified-purchase-only queda fuera del slice para no depender de historial de ordenes.
-- **Resultado:** `packages/contracts/src/reviews.ts`, modelo Prisma `Review`, migracion versionada y modulo API `apps/api/src/modules/reviews/`.
+- **Resultado:** `packages/contracts/src/reviews.ts`, modelo Prisma `Review`, migracion versionada, modulo API `apps/api/src/modules/reviews/` y UI de resenas en detalle de producto.
 - **Correccion/rechazo:** se rechazo embedding de reviews en `productSchema` y verificacion de compra en esta primera iteracion.
-- **Verificacion:** Prisma validate OK; Prisma generate `--no-engine` OK por bloqueo `EPERM` del DLL de engine; contracts build OK; API build OK; API tests OK: 11 archivos, 42 tests; build raiz OK.
+- **Verificacion:** Prisma validate OK; Prisma generate `--no-engine` OK por bloqueo `EPERM` del DLL de engine; contracts build OK; API build OK; API tests OK: 11 archivos, 42 tests; build raiz OK; follow-up UI `yarn workspace @vps-template/web build` OK.
 
 ## Correcciones o rechazos relevantes
 

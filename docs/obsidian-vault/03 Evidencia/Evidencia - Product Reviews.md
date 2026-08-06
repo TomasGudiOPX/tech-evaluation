@@ -15,7 +15,7 @@ Agrega resenas de productos como modulo de dominio independiente de catalogo.
 | Decision | "Consumer" significa cliente autenticado; se difiere verificacion de compra para evitar dependencia con historial de ordenes. |
 | Arquitectura | [[02 Arquitectura/Modulos de Dominio#Reviews]] |
 | Prompt y herramienta | [[03 Evidencia/Registro de Evidencia IA#AI-2026-08-06-01 - Product reviews]] |
-| Implementacion | `packages/contracts/src/reviews.ts`, `apps/api/prisma/schema.prisma`, `apps/api/prisma/migrations/20260806120000_add_product_reviews/migration.sql`, `apps/api/src/modules/reviews/`, `apps/api/src/app.ts`. |
+| Implementacion | `packages/contracts/src/reviews.ts`, `apps/api/prisma/schema.prisma`, `apps/api/prisma/migrations/20260806120000_add_product_reviews/migration.sql`, `apps/api/src/modules/reviews/`, `apps/api/src/app.ts`, `apps/web/src/components/ProductDetailView.tsx`, `apps/web/src/styles.css`. |
 | Pruebas | `yarn workspace @vps-template/api exec prisma generate --no-engine` OK; `yarn workspace @vps-template/contracts build` OK; `yarn workspace @vps-template/api build` OK; `yarn workspace @vps-template/api test` OK: 11 archivos, 42 tests; `yarn build` OK. |
 | Commit | Este commit de implementacion referencia `openspec/changes/add-product-reviews`. |
 
@@ -28,6 +28,7 @@ Agrega resenas de productos como modulo de dominio independiente de catalogo.
 - `PATCH /api/reviews/:reviewId` requiere JWT y actualiza solo resenas propias.
 - Review ajena o inexistente devuelve `REVIEW_NOT_FOUND`.
 - Rating no entero, rating fuera de 1..10 o comentario mayor a 100 caracteres devuelve `VALIDATION_ERROR` con `fieldErrors`.
+- La pagina de detalle de producto muestra resenas y permite crear/actualizar la resena propia si el cliente esta autenticado.
 
 ## Verificacion
 
@@ -37,3 +38,4 @@ Agrega resenas de productos como modulo de dominio independiente de catalogo.
 - `yarn workspace @vps-template/api build` OK.
 - `yarn workspace @vps-template/api test` OK: 11 archivos, 42 tests.
 - `yarn build` OK.
+- Follow-up UI: `yarn workspace @vps-template/web build` OK.

@@ -34,6 +34,8 @@ function App() {
     removeToast,
     error,
     isBusy,
+    token,
+    addToast,
     authenticate,
     logout,
     addToCart,
@@ -84,8 +86,12 @@ function App() {
       {view === 'detail' && (
         <ProductDetailView
           product={selectedProduct}
+          user={user}
+          token={token}
           onBack={() => setView('catalog')}
           onAddToCart={addToCart}
+          onOpenAuth={() => setIsAuthOpen(true)}
+          onToast={addToast}
           isBusy={isBusy}
         />
       )}

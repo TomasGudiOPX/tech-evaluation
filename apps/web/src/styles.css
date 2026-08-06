@@ -1299,6 +1299,138 @@ nav a.active {
   font-size: 1.05rem;
 }
 
+.reviews-panel {
+  margin-top: 28px;
+  padding: 28px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.reviews-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.reviews-header h2 {
+  font-family: var(--font-serif);
+  font-size: 1.55rem;
+  line-height: 1.2;
+}
+
+.review-count,
+.review-auth-note,
+.own-review-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: var(--accent-light);
+  color: var(--accent-primary);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 22px;
+  padding: 18px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-main);
+}
+
+.review-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.review-form-header h3 {
+  font-size: 1rem;
+}
+
+.review-form-grid {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.review-comment-field textarea {
+  resize: vertical;
+  min-height: 92px;
+}
+
+.review-submit-btn {
+  align-self: flex-start;
+}
+
+.review-error {
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--badge-danger-bg);
+  color: var(--badge-danger-text);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.empty-reviews {
+  margin-top: 20px;
+  padding: 24px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.reviews-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.review-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+}
+
+.review-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.review-rating {
+  font-weight: 900;
+  color: var(--accent-primary);
+}
+
+.review-date {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.review-card p {
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
 /* ==========================================================================
    Cart View Component
    ========================================================================== */
@@ -1973,6 +2105,9 @@ nav a.active {
     padding-bottom: 4px;
   }
   .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .review-form-grid {
     grid-template-columns: 1fr;
   }
   .cart-layout,
