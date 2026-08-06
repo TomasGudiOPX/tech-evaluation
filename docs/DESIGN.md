@@ -26,7 +26,7 @@ apps/
   api/                 NestJS modular monolith
     prisma/            Schema, migrations, and seed
     src/platform/      Configuration, Prisma, and shared app infrastructure
-    src/modules/       Auth, products, cart, and orders
+    src/modules/       Auth, products, cart, orders, and reviews
   web/                 Vite React storefront
 packages/
   contracts/           Shared Zod schemas and API types
@@ -45,6 +45,7 @@ Business behavior belongs in `src/modules/<feature>`. A feature owns its control
 | Authenticated cart only | Avoids guest-cart merge complexity | Cart and checkout require login |
 | Simulated checkout | Meets evaluation scope without payment-provider risk | No external payment call is made |
 | Idempotent checkout key | Supports retry-safe order creation | Reusing a key for a changed cart returns a domain error |
+| Reviews as standalone module | Keeps customer feedback separate from catalog ownership | Products stay review-free by default; reviews reference active products and users |
 | Prisma migrations | Makes data changes reviewable and repeatable | Schema changes require versioned migration files |
 
 ## UI Direction

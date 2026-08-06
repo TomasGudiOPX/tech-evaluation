@@ -14,6 +14,7 @@ tags: [requisitos, indice]
 | FR-06 | Admin CRUD con retiro logico de productos | [[03 Evidencia/Evidencia - Catalogo y Admin]] |
 | FR-07 | Ruta web `/admin` dedicada, deep-linkable y sticky | [[03 Evidencia/Evidencia - Evaluacion Ampliada]] |
 | FR-08 | Paginacion del listado de productos | [[03 Evidencia/Evidencia - Evaluacion Ampliada]] |
+| FR-09 | Resenas de productos por clientes autenticados | [[03 Evidencia/Evidencia - Product Reviews]] |
 | NFR-01 | Modulos, secretos por entorno, migraciones | [[01 Requisitos/Requisitos de Calidad]] |
 | NFR-02 | Pruebas, lint, formato, Compose y CI | [[01 Requisitos/Requisitos de Calidad#NFR-02 - Calidad y entrega]] |
 | NFR-03 | API REST y errores consistentes | [[01 Requisitos/Requisitos de Calidad#NFR-03 - API y errores]] |

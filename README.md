@@ -21,12 +21,14 @@ The app keeps the pragmatic VPS template shape but implements the evaluation dom
 - Authenticated persistent cart with add, update, and remove.
 - Simulated checkout with required `Idempotency-Key`.
 - Atomic stock decrement, immutable order item snapshots, and order history.
+- Public product reviews plus authenticated customer create/update ownership.
 - Swagger/OpenAPI documentation at `/api/docs`.
 
 ## API
 
 - `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/profile`.
 - `GET /api/products`, `GET /api/products/:id`.
+- `GET /api/products/:productId/reviews`, `POST /api/products/:productId/reviews`, `PATCH /api/reviews/:reviewId`.
 - `GET /api/cart`, `POST /api/cart/items`, `PATCH /api/cart/items/:productId`, `DELETE /api/cart/items/:productId`.
 - `POST /api/orders/checkout`, `GET /api/orders`.
 - `POST /api/admin/products`, `PATCH /api/admin/products/:id`, `DELETE /api/admin/products/:id`.
@@ -42,7 +44,7 @@ browser -> nginx proxy -> Vite React static app
 | --- | --- |
 | `apps/web/` | Product-facing React storefront, cart, checkout, orders, and admin UI |
 | `apps/api/src/platform/` | Configuration, Prisma, and shared app infrastructure |
-| `apps/api/src/modules/` | Auth, products, cart, and orders modules |
+| `apps/api/src/modules/` | Auth, products, cart, orders, and reviews modules |
 | `packages/contracts/` | Shared schemas and API types |
 | `apps/api/prisma/` | Prisma schema, migrations, and deterministic seed |
 | `openspec/` | Accepted specs and proposed changes |

@@ -167,3 +167,16 @@ Este registro alimenta `INFORME_IA.md`. No registrar actividad que no haya ocurr
 - **Prueba asociada:** Verificacion manual; suite API sin regresion (8 archivos, 29 tests).
 - **Enlaces:** [[03 Evidencia/Evidencia - Catalogo y Admin]], [[03 Evidencia/Evidencia - Evaluacion Ampliada]].
 - **Commit asociado:** `7c3d86d feat: update product categories flow and UI` (reemplaza a `5fd50de`).
+
+## AI-2026-08-06-01 - Product reviews
+
+- **Vertical / requisito:** FR-09, NFR-01, NFR-02, NFR-03, AI-03.
+- **Herramienta o agente:** Codex con `$openspec-apply-change` y skills locales `proj-bot`/`proj-bot-shared`.
+- **Objetivo:** Implementar resenas de productos con contrato compartido, modelo Prisma, API NestJS y evidencia.
+- **Prompt resumido o enlace:** El usuario pidio aplicar `openspec/changes/add-product-reviews` con contexto de `.project-knowledge` y `docs`.
+- **Salida recibida:** Contrato `@vps-template/contracts/reviews`, modelo `Review`, migracion versionada y modulo API `reviews`.
+- **Revision humana:** La propuesta confirma que consumidor significa cliente autenticado; no verified-purchase.
+- **Correccion o rechazo:** Se rechazo verified-purchase-only en este slice porque introduce reglas de elegibilidad por orden fuera del alcance.
+- **Motivo tecnico:** Mantener reviews como modulo separado evita contaminar `Product` con contenido generado por usuarios y conserva el retiro logico del catalogo.
+- **Prueba asociada:** Prisma validate OK; Prisma generate `--no-engine` OK por bloqueo `EPERM` del DLL de engine; contracts build OK; API build OK; API tests OK: 11 archivos, 42 tests; build raiz OK.
+- **Enlaces:** [[03 Evidencia/Evidencia - Product Reviews]], `openspec/changes/add-product-reviews`.

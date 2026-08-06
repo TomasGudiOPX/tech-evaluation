@@ -53,3 +53,11 @@ tags: [requisitos, funcional]
 - Sin parametros devuelve el listado completo (compatibilidad retroactiva).
 - Con parametros valida enteros positivos y `pageSize <= 100`; respuesta incluye `pagination`.
 - Catalogo cliente añade pager sobre los resultados filtrados.
+
+## FR-09 - Resenas de productos
+
+- Visitantes consultan resenas de productos activos sin login.
+- Clientes autenticados crean una resena por producto activo.
+- Clientes autenticados actualizan solo su propia resena.
+- Rating entero de 1 a 10 y comentario trimmeado de hasta 100 caracteres.
+- Productos faltantes o retirados no exponen ni aceptan resenas.

@@ -6,7 +6,7 @@ Este informe se completa durante el desarrollo. No es una transcripcion completa
 
 - Codex: exploracion inicial, artefactos OpenSpec, implementacion de verticales, polish UI, Swagger, CI y documentacion de evidencia.
 - Corepack/Yarn: instalacion reproducible de workspaces y ejecucion de Prisma, tests y builds.
-- Prisma: generacion de cliente y migraciones versionadas para usuarios, productos, carrito y ordenes.
+- Prisma: generacion de cliente y migraciones versionadas para usuarios, productos, carrito, ordenes y resenas.
 
 ## Especificacion previa
 
@@ -38,6 +38,7 @@ Razon del mix: TDD brilla donde el comportamiento es nuevo y propenso a regresio
 | CI/Docker | Workflow GitHub Actions y Dockerfiles | Documente que no hay perfiles `dev`/`qa`/`prod`; agregue solo perfil Compose `ops` para migrate/seed; documente separacion de entornos por `.env`/`COMPOSE_PROJECT_NAME`/puertos |
 | QA | `tests/qa-commerce-smoke.mjs` y planes de prueba | Elegi `qa-smoke`/`qa-backend-full-test`/`qa-front-playwright-test` sobre TestSprite segun las skills locales; revise los 12 checks contra `127.0.0.1:18080` |
 | Seguridad | `helmet` + `@nestjs/throttler` | Defini el shape `429` estructurado y el tracker `X-Forwarded-For`; escribi `security.test.ts` primero (TDD) |
+| Product reviews | Contrato Zod, modelo Prisma, modulo NestJS `reviews` y pruebas unitarias | Confirme que consumidor significa cliente autenticado, no verified-purchase; mantuve reviews fuera de `Product` |
 
 En todos los casos la IA produjo el primer draft; el valor agregado humano fue alcance, validacion de bordes, consistencia de contratos y rechazo de atajos (admin por defecto, `CREATE TABLE IF NOT EXISTS`, pagos externos, perfiles Docker que no existen).
 
@@ -110,6 +111,15 @@ En todos los casos la IA produjo el primer draft; el valor agregado humano fue a
 - **Verificacion:** API tests OK: 8 archivos, 29 tests; smoke QA OK: 12 checks contra `http://127.0.0.1:18080`.
 - **Commit asociado:** `cf69941 Add QA implementation artifacts` en `QA-Implementation`.
 
+### AI-2026-08-06-01 - Product reviews
+
+- **Contexto:** `openspec/changes/add-product-reviews` define resenas publicas para productos activos y mutaciones autenticadas.
+- **Objetivo:** implementar contrato, modelo, API, pruebas y evidencia sin mezclar reviews dentro de productos.
+- **Decision humana:** consumidor significa cliente autenticado; verified-purchase-only queda fuera del slice para no depender de historial de ordenes.
+- **Resultado:** `packages/contracts/src/reviews.ts`, modelo Prisma `Review`, migracion versionada y modulo API `apps/api/src/modules/reviews/`.
+- **Correccion/rechazo:** se rechazo embedding de reviews en `productSchema` y verificacion de compra en esta primera iteracion.
+- **Verificacion:** Prisma validate OK; Prisma generate `--no-engine` OK por bloqueo `EPERM` del DLL de engine; contracts build OK; API build OK; API tests OK: 11 archivos, 42 tests; build raiz OK.
+
 ## Correcciones o rechazos relevantes
 
 - No se acepto que el request de registro pueda enviar `role` o `isAdmin`; el servicio debe crear siempre `customer`.
@@ -121,6 +131,7 @@ En todos los casos la IA produjo el primer draft; el valor agregado humano fue a
 - No se acepto migrar a Next.js al final porque no aporta al alcance verificado y aumenta riesgo.
 - No se acepto documentar perfiles Docker `dev`, `qa` o `prod` que no existen; el modelo real usa entornos por configuracion y un perfil operativo `ops` para migraciones/seed.
 - No se acepto usar TestSprite como sustituto de Playwright/smoke normal porque las skills locales lo reservan para una solicitud explicita o artefactos TestSprite existentes.
+- No se acepto implementar resenas verified-purchase-only en el primer slice; se mantuvo el alcance en cliente autenticado por producto activo.
 
 ## Estado
 
