@@ -4,8 +4,8 @@
 
 ```text
 apps/
-  api/                 Fastify modular monolith
-  web/                 React application
+  api/                 NestJS modular monolith
+  web/                 Vite React application
 packages/
   contracts/           Shared API schemas and types
 openspec/

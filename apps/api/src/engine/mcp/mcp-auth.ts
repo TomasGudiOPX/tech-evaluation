@@ -11,8 +11,5 @@ export function hasValidBearerToken(request: FastifyRequest, expectedToken: stri
   const providedToken = Buffer.from(authorization.slice('Bearer '.length));
   const expectedTokenBuffer = Buffer.from(expectedToken);
 
-  return (
-    providedToken.length === expectedTokenBuffer.length &&
-    timingSafeEqual(providedToken, expectedTokenBuffer)
-  );
+  return providedToken.length === expectedTokenBuffer.length && timingSafeEqual(providedToken, expectedTokenBuffer);
 }

@@ -4,17 +4,26 @@
   "version": "0.1.0",
   "type": "module",
   "exports": {
-    "./projects": {
-      "types": "./dist/projects.d.ts",
-      "default": "./dist/projects.js"
-    },
     "./auth": {
       "types": "./dist/auth.d.ts",
       "default": "./dist/auth.js"
+    },
+    "./products": {
+      "types": "./dist/products.d.ts",
+      "default": "./dist/products.js"
+    },
+    "./cart": {
+      "types": "./dist/cart.d.ts",
+      "default": "./dist/cart.js"
+    },
+    "./orders": {
+      "types": "./dist/orders.d.ts",
+      "default": "./dist/orders.js"
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "lint": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "zod": "^4.1.12"

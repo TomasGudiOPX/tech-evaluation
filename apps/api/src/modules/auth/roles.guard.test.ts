@@ -19,7 +19,7 @@ function adminOnlyGuard() {
     getAllAndOverride: vi.fn(() => ['admin']),
   } satisfies Pick<Reflector, 'getAllAndOverride'>;
 
-  return new RolesGuard(reflector as Reflector);
+  return new RolesGuard(reflector as unknown as Reflector);
 }
 
 describe('RolesGuard', () => {

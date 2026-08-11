@@ -38,3 +38,18 @@ tags: [requisitos, funcional]
 
 - Solo admin puede crear, editar o retirar productos.
 - No hay hard delete.
+
+## FR-07 - Ruta admin dedicada
+
+- La consola de administracion vive en una ruta SPA `/admin` separada del storefront.
+- Se abre en pestaña nueva desde el header, soporta deep-link y refresh.
+- El contenedor web sirve fallback SPA para que `/admin` no devuelva 404.
+- Acceso guardado por `role === 'admin'`; no admin redirige al catalogo.
+- En pantalla ancha el formulario de producto queda sticky para no perderlo al hacer scroll.
+
+## FR-08 - Paginacion de productos
+
+- `GET /api/products` acepta `page` y `pageSize` opcionales.
+- Sin parametros devuelve el listado completo (compatibilidad retroactiva).
+- Con parametros valida enteros positivos y `pageSize <= 100`; respuesta incluye `pagination`.
+- Catalogo cliente añade pager sobre los resultados filtrados.

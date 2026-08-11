@@ -26,7 +26,12 @@ export class TokenService {
   verify(token: string): JwtClaims {
     const decoded = jwt.verify(token, this.config.jwtSecret);
 
-    if (typeof decoded === 'string' || !decoded.sub || typeof decoded.email !== 'string' || decoded.role !== 'customer' && decoded.role !== 'admin') {
+    if (
+      typeof decoded === 'string' ||
+      !decoded.sub ||
+      typeof decoded.email !== 'string' ||
+      (decoded.role !== 'customer' && decoded.role !== 'admin')
+    ) {
       throw new Error('Invalid token claims');
     }
 

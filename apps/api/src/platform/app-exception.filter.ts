@@ -1,4 +1,12 @@
-import { ArgumentsHost, Catch, ExceptionFilter, ForbiddenException, HttpException, UnauthorizedException } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  ForbiddenException,
+  HttpException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ThrottlerException } from '@nestjs/throttler';
 import { ZodError } from 'zod';
 import { AppError, type FieldErrors } from './app-error.js';
 
@@ -42,6 +50,13 @@ export class AppExceptionFilter implements ExceptionFilter {
       return response.status(403).send({
         code: 'AUTH_FORBIDDEN',
         message: 'Administrator access is required',
+      });
+    }
+
+    if (exception instanceof ThrottlerException) {
+      return response.status(429).send({
+        code: 'RATE_LIMITED',
+        message: 'Too many requests, please try again later.',
       });
     }
 
