@@ -22,6 +22,7 @@ The app keeps the pragmatic VPS template shape but implements the evaluation dom
 - Simulated checkout with required `Idempotency-Key`.
 - Atomic stock decrement, immutable order item snapshots, and order history.
 - Product-detail reviews with public listing and authenticated customer create/update ownership.
+- Supervised action workflow over the MCP endpoint: read-only context tools plus a propose/approve/execute loop with an append-only approval ledger.
 - Swagger/OpenAPI documentation at `/api/docs`.
 
 ## API
@@ -32,6 +33,10 @@ The app keeps the pragmatic VPS template shape but implements the evaluation dom
 - `GET /api/cart`, `POST /api/cart/items`, `PATCH /api/cart/items/:productId`, `DELETE /api/cart/items/:productId`.
 - `POST /api/orders/checkout`, `GET /api/orders`.
 - `POST /api/admin/products`, `PATCH /api/admin/products/:id`, `DELETE /api/admin/products/:id`.
+
+## MCP / Supervised Workflow
+
+The API exposes a Model Context Protocol endpoint at `/mcp` (mounted only when `MCP_API_TOKEN` is set). It provides read-only catalog/order/cart/user/review tools plus a supervised action loop: `propose_action`, `list_actions`, `get_action`, `approve_action`, `reject_action`, `correct_action`, and `get_action_metrics`. Business writes execute only through the executor on an explicit approval. See `docs/VPS-DOC.md` for the exposure and token requirements.
 
 ## Structure
 

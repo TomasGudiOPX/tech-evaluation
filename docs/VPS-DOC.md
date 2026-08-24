@@ -22,6 +22,20 @@ The API is the only service that queries PostgreSQL. The proxy routes `/api/...`
 
 You need Docker Engine, the Docker Compose plugin, Node 22 with Corepack for source checks, SSH access to the VPS, and a TLS proxy such as Caddy, Traefik, or a managed reverse proxy for public domains.
 
+## MCP Endpoint (supervised action workflow)
+
+`nginx/default.conf` exposes `location = /mcp` to the API, so the public MCP URL is `https://<vps-domain>/mcp`. The MCP module is mounted only when `MCP_API_TOKEN` is set, so set a non-empty token in the environment `.env` (Compose maps `${MCP_API_TOKEN:-}` into the API container) or the endpoint will not exist.
+
+For a deployment that fronts the endpoint with a host TLS proxy, keep `HTTP_BIND_ADDRESS=127.0.0.1` and route `/mcp` to the loopback port. The API binds to `127.0.0.1` by default; set `HTTP_BIND_ADDRESS=0.0.0.0` only when the API itself must accept direct connections.
+
+Verify the endpoint is mounted: a request without the token returns `401`, and with the token it returns `200` (not `404`):
+
+```powershell
+curl -i -H "Authorization: Bearer <MCP_API_TOKEN>" https://<vps-domain>/mcp
+```
+
+Keep `MCP_API_TOKEN` out of the repository and store it only in the deployment `.env`.
+
 ## Local Docker Run
 
 ```powershell

@@ -37,7 +37,11 @@ function createServices(): WorkflowToolServices {
 function register(services = createServices()) {
   const tools: RegisteredTool[] = [];
   const server = {
-    registerTool(name: string, config: { inputSchema: RegisteredTool['inputSchema'] }, handler: RegisteredTool['handler']) {
+    registerTool(
+      name: string,
+      config: { inputSchema: RegisteredTool['inputSchema'] },
+      handler: RegisteredTool['handler'],
+    ) {
       tools.push({ name, inputSchema: config.inputSchema, handler });
     },
   };

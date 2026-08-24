@@ -36,11 +36,25 @@ function createService(initial: ActionRow[] = [action()]) {
   const store = initial.map((item) => ({ ...item }));
 
   const repository = {
-    createPendingAction: vi.fn(async (data: { kind: string; contextRef: string | null; payload: unknown; source: string; proposedBy: string | null }) => {
-      const row = action({ kind: data.kind, contextRef: data.contextRef, payload: data.payload, source: data.source, proposedBy: data.proposedBy });
-      store.push(row);
-      return row;
-    }),
+    createPendingAction: vi.fn(
+      async (data: {
+        kind: string;
+        contextRef: string | null;
+        payload: unknown;
+        source: string;
+        proposedBy: string | null;
+      }) => {
+        const row = action({
+          kind: data.kind,
+          contextRef: data.contextRef,
+          payload: data.payload,
+          source: data.source,
+          proposedBy: data.proposedBy,
+        });
+        store.push(row);
+        return row;
+      },
+    ),
     findById: vi.fn(async (id: string) => store.find((item) => item.id === id) ?? null),
     list: vi.fn(async (status?: string) => store.filter((item) => !status || item.status === status)),
     recordDecision: vi.fn(async (id: string, data: Record<string, unknown>) => {
@@ -182,7 +196,10 @@ describe('ActionService', () => {
   });
 
   it('lists actions optionally filtered by status', async () => {
-    const { repository, service } = createService([action(), action({ id: '00000000-0000-4000-8000-000000000004', status: 'executed' })]);
+    const { repository, service } = createService([
+      action(),
+      action({ id: '00000000-0000-4000-8000-000000000004', status: 'executed' }),
+    ]);
 
     await expect(service.list()).resolves.toHaveLength(2);
     await expect(service.list('executed')).resolves.toEqual([

@@ -106,7 +106,9 @@ describe('actions contracts', () => {
     });
 
     it('accepts the deferred stock_adjust and retire_product payloads', () => {
-      expect(pendingActionPayloadSchema.parse({ kind: 'stock_adjust', productId, delta: -2 }).kind).toBe('stock_adjust');
+      expect(pendingActionPayloadSchema.parse({ kind: 'stock_adjust', productId, delta: -2 }).kind).toBe(
+        'stock_adjust',
+      );
       expect(pendingActionPayloadSchema.parse({ kind: 'retire_product', productId }).kind).toBe('retire_product');
     });
 
@@ -145,9 +147,7 @@ describe('actions contracts', () => {
     });
 
     it('requires a corrected payload for correct_action', () => {
-      expect(() =>
-        correctActionInputSchema.parse({ actionId: orderId, decidedBy: 'support@example.com' }),
-      ).toThrow();
+      expect(() => correctActionInputSchema.parse({ actionId: orderId, decidedBy: 'support@example.com' })).toThrow();
       expect(
         correctActionInputSchema.parse({
           actionId: orderId,

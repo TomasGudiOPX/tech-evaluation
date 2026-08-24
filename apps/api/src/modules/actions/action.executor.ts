@@ -22,7 +22,11 @@ export class ActionExecutorService {
         return this.executeFollowupTask(action.payload);
       case 'stock_adjust':
       case 'retire_product':
-        throw new AppError(501, 'ACTION_KIND_NOT_SUPPORTED', `Action kind '${action.kind}' is deferred to a later slice`);
+        throw new AppError(
+          501,
+          'ACTION_KIND_NOT_SUPPORTED',
+          `Action kind '${action.kind}' is deferred to a later slice`,
+        );
       default:
         throw new AppError(400, 'ACTION_KIND_UNKNOWN', `Unknown action kind '${action.kind}'`);
     }

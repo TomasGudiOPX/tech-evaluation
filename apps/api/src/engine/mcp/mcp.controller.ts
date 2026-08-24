@@ -81,9 +81,7 @@ function registerProductTools(server: McpServer, products: ProductService): void
       title: 'List products',
       description: 'List products from the catalog. Filter by category, max price (cents), or active status.',
       inputSchema: z.object({
-        category: z
-          .enum(['workspace', 'bags', 'kitchen', 'decor', 'wellness', 'travel'] as const)
-          .optional(),
+        category: z.enum(['workspace', 'bags', 'kitchen', 'decor', 'wellness', 'travel'] as const).optional(),
         maxPriceCents: z.number().int().positive().optional(),
         activeOnly: z.boolean().optional(),
       }),

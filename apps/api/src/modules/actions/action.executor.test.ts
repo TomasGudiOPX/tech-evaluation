@@ -77,7 +77,11 @@ describe('ActionExecutorService', () => {
       actionWith('note', { kind: 'note', userId, orderId, content: 'Customer prefers email updates.' }),
     );
 
-    expect(repository.createCustomerNote).toHaveBeenCalledWith({ userId, orderId, content: 'Customer prefers email updates.' });
+    expect(repository.createCustomerNote).toHaveBeenCalledWith({
+      userId,
+      orderId,
+      content: 'Customer prefers email updates.',
+    });
     expect(repository.findCustomerNote).toHaveBeenCalledWith(noteId);
     expect(JSON.parse(resultRef)).toMatchObject({ kind: 'note', noteId, userId, orderId });
   });

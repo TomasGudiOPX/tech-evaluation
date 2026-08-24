@@ -26,7 +26,8 @@ apps/
   api/                 NestJS modular monolith
     prisma/            Schema, migrations, and seed
     src/platform/      Configuration, Prisma, and shared app infrastructure
-    src/modules/       Auth, products, cart, orders, and reviews
+    src/modules/       Auth, products, cart, orders, reviews, and actions
+    src/engine/mcp/    Model Context Protocol endpoint (read + supervised-action tools)
   web/                 Vite React storefront
 packages/
   contracts/           Shared Zod schemas and API types
@@ -46,6 +47,7 @@ Business behavior belongs in `src/modules/<feature>`. A feature owns its control
 | Simulated checkout | Meets evaluation scope without payment-provider risk | No external payment call is made |
 | Idempotent checkout key | Supports retry-safe order creation | Reusing a key for a changed cart returns a domain error |
 | Reviews as standalone module | Keeps customer feedback separate from catalog ownership | Products stay review-free by default; reviews reference active products and users |
+| Supervised action workflow | The agent proposes and the human approves; only the executor writes | Writes are ledger-audited and read back; deferred kinds are rejected until a later slice |
 | Prisma migrations | Makes data changes reviewable and repeatable | Schema changes require versioned migration files |
 
 ## UI Direction

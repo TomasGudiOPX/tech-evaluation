@@ -39,6 +39,7 @@ Razon del mix: TDD brilla donde el comportamiento es nuevo y propenso a regresio
 | QA | `tests/qa-commerce-smoke.mjs` y planes de prueba | Elegi `qa-smoke`/`qa-backend-full-test`/`qa-front-playwright-test` sobre TestSprite segun las skills locales; revise los 12 checks contra `127.0.0.1:18080` |
 | Seguridad | `helmet` + `@nestjs/throttler` | Defini el shape `429` estructurado y el tracker `X-Forwarded-For`; escribi `security.test.ts` primero (TDD) |
 | Product reviews | Contrato Zod, modelo Prisma, modulo NestJS `reviews` y pruebas unitarias | Confirme que consumidor significa cliente autenticado, no verified-purchase; mantuve reviews fuera de `Product` |
+| Supervised action workflow | Contrato `actions`, modelo Prisma (`PendingAction` + `CustomerNote` + `FollowupTask`), modulo `actions` (service + executor), MCP tools y pruebas | Decidi que los writes de slice 0 (`note`, `followup_task`) van a tablas minimas, no ledger-only; mantuve `stock_adjust`/`retire_product` diferidos; "la IA propone, la persona decide" |
 
 En todos los casos la IA produjo el primer draft; el valor agregado humano fue alcance, validacion de bordes, consistencia de contratos y rechazo de atajos (admin por defecto, `CREATE TABLE IF NOT EXISTS`, pagos externos, perfiles Docker que no existen).
 
@@ -120,6 +121,16 @@ En todos los casos la IA produjo el primer draft; el valor agregado humano fue a
 - **Correccion/rechazo:** se rechazo embedding de reviews en `productSchema` y verificacion de compra en esta primera iteracion.
 - **Verificacion:** Prisma validate OK; Prisma generate `--no-engine` OK por bloqueo `EPERM` del DLL de engine; contracts build OK; API build OK; API tests OK: 11 archivos, 42 tests; build raiz OK; follow-up UI `yarn workspace @vps-template/web build` OK.
 
+### AI-2026-08-24-01 - Supervised action workflow
+
+- **Contexto:** el plan `2026-08-24_150739-cart-supervised-workflow-plan.md` convierte el agente MCP read-only en un workflow supervisado con ledger de aprobaciones (Metodo Openix).
+- **Objetivo:** implementar la Fase 1 (dev) del plan: contratos, ledger Prisma, modulo `actions`, executor y herramientas MCP.
+- **Decision humana:** los writes de slice 0 (`note` + `followup_task`) van a tablas minimas `CustomerNote` + `FollowupTask` (entidades reales con read-back + IDs), no ledger-only; `stock_adjust` y `retire_product` quedan definidos en el schema pero diferidos.
+- **Resultado:** `packages/contracts/src/actions.ts`, migracion `20260824160000_add_supervised_action_workflow`, `apps/api/src/modules/actions/`, `apps/api/src/engine/mcp/mcp.workflow-tools.ts`, reads de ordenes en `order.service`/`order.repository`.
+- **Correccion/rechazo:** se rechazo ledger-only para notas/tareas; se rechazo ejecutar `stock_adjust`/`retire_product` en slice 0.
+- **Verificacion:** prisma validate/generate OK; contracts build OK; API build OK; API tests OK: 15 archivos, 80 tests; build raiz OK.
+- **Commit asociado:** `1d85406 feat(actions): add supervised action workflow`.
+
 ## Correcciones o rechazos relevantes
 
 - No se acepto que el request de registro pueda enviar `role` o `isAdmin`; el servicio debe crear siempre `customer`.
@@ -132,10 +143,11 @@ En todos los casos la IA produjo el primer draft; el valor agregado humano fue a
 - No se acepto documentar perfiles Docker `dev`, `qa` o `prod` que no existen; el modelo real usa entornos por configuracion y un perfil operativo `ops` para migraciones/seed.
 - No se acepto usar TestSprite como sustituto de Playwright/smoke normal porque las skills locales lo reservan para una solicitud explicita o artefactos TestSprite existentes.
 - No se acepto implementar resenas verified-purchase-only en el primer slice; se mantuvo el alcance en cliente autenticado por producto activo.
+- No se acepto guardar las notas/tareas de slice 0 dentro del ledger (`resultRef`); se crearon tablas `CustomerNote` + `FollowupTask` para que la ejecucion produzca entidades reales con id leido de vuelta.
 
 ## Estado
 
-Catalogo/admin quedo verificado con Prisma generate, build de contracts/API, 17 tests de API y build general. Carrito/checkout/ordenes quedo verificado con Prisma generate, build de contracts/API, 29 tests de API, build web y build general. Docs/CI/polish quedo verificado con lint, builds, tests y Compose config. El arranque Docker local quedo verificado con `migrate`, `seed`, `up`, `/health`, `/api/products` y `/api/docs`. La rama `QA-Implementation` agrega evidencia QA separada, planes de prueba y un smoke ejecutable; quedo publicada en `origin/QA-Implementation`.
+Catalogo/admin quedo verificado con Prisma generate, build de contracts/API, 17 tests de API y build general. Carrito/checkout/ordenes quedo verificado con Prisma generate, build de contracts/API, 29 tests de API, build web y build general. Docs/CI/polish quedo verificado con lint, builds, tests y Compose config. El arranque Docker local quedo verificado con `migrate`, `seed`, `up`, `/health`, `/api/products` y `/api/docs`. La rama `QA-Implementation` agrega evidencia QA separada, planes de prueba y un smoke ejecutable; quedo publicada en `origin/QA-Implementation`. El workflow supervisado de acciones (Fase 1, dev) quedo verificado con Prisma generate, build de contracts/API, 80 tests de API y build raiz; la conexion final de Hermes al endpoint MCP desplegado queda para la Fase 3, tras el handoff de devops (URL + `MCP_API_TOKEN`).
 
 ## Comandos de verificacion usados
 

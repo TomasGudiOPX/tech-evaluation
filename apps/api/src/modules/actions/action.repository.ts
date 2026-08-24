@@ -86,7 +86,11 @@ export class ActionRepository {
     return order !== null;
   }
 
-  async createCustomerNote(data: { userId: string; orderId: string | null; content: string }): Promise<CustomerNoteRow> {
+  async createCustomerNote(data: {
+    userId: string;
+    orderId: string | null;
+    content: string;
+  }): Promise<CustomerNoteRow> {
     return this.prisma.customerNote.create({
       data: { userId: data.userId, orderId: data.orderId, content: data.content },
     });

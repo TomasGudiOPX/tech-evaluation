@@ -14,7 +14,7 @@ browser -> proxy (Nginx) -> frontend (Vite React static files)
 - `docker-compose.yml` is the deployment boundary. Only `proxy` publishes a host port.
 - `apps/web/` owns the catalog, product detail, auth, cart, checkout, orders, and admin UI.
 - `apps/api/src/platform/` owns configuration, Prisma setup, global errors, and shared infrastructure.
-- `apps/api/src/modules/` owns business modules: `auth`, `products`, `cart`, `orders`, and `reviews`.
+- `apps/api/src/modules/` owns business modules: `auth`, `products`, `cart`, `orders`, `reviews`, and `actions`.
 - `packages/contracts/` contains only schemas and types shared by API and web.
 - `apps/api/prisma/` contains the schema, versioned migrations, and deterministic seed.
 - `openspec/` records accepted behavior and planned changes.
