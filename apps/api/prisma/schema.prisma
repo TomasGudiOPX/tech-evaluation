@@ -23,6 +23,7 @@ model User {
   orders       Order[]
   reviews      Review[]
   idempotencyKeys CheckoutIdempotencyKey[]
+  customerNotes CustomerNote[]
 
   @@map("users")
 }
@@ -56,6 +57,14 @@ model Product {
 
 enum OrderStatus {
   placed
+}
+
+enum ActionStatus {
+  proposed
+  approved
+  rejected
+  executed
+  failed
 }
 
 model Cart {
@@ -93,6 +102,7 @@ model Order {
   items      OrderItem[]
   createdAt  DateTime    @default(now()) @map("created_at")
   idempotencyKeys CheckoutIdempotencyKey[]
+  customerNotes CustomerNote[]
 
   @@index([userId, createdAt])
   @@map("orders")
@@ -145,4 +155,56 @@ model Review {
   @@unique([productId, userId])
   @@index([productId, createdAt])
   @@map("reviews")
+}
+
+model PendingAction {
+  id         String       @id @default(uuid()) @db.Uuid
+  kind       String
+  contextRef String?      @map("context_ref")
+  payload    Json
+  source     String
+  proposedAt DateTime     @default(now()) @map("proposed_at")
+  proposedBy String?      @map("proposed_by")
+  status     ActionStatus @default(proposed)
+  decidedBy  String?      @map("decided_by")
+  decidedAt  DateTime?    @map("decided_at")
+  decision   String?
+  reason     String?
+  resultRef  String?      @map("result_ref")
+  executedAt DateTime?    @map("executed_at")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([contextRef])
+  @@map("pending_actions")
+}
+
+model CustomerNote {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  orderId   String?  @map("order_id") @db.Uuid
+  content   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order     Order?   @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([orderId])
+  @@map("customer_notes")
+}
+
+model FollowupTask {
+  id         String   @id @default(uuid()) @db.Uuid
+  title      String
+  owner      String
+  dueAt      DateTime @map("due_at")
+  status     String   @default("open")
+  contextRef String?  @map("context_ref")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([contextRef])
+  @@map("followup_tasks")
 }

@@ -21,4 +21,18 @@ export class OrderService {
   async listForUser(userId: string): Promise<Order[]> {
     return (await this.repository.listForUser(userId)).map(toOrder);
   }
+
+  async listOrders(limit = 50): Promise<Order[]> {
+    return (await this.repository.listAll(limit)).map(toOrder);
+  }
+
+  async getOrder(id: string): Promise<Order> {
+    const order = await this.repository.findById(id);
+
+    if (!order) {
+      throw new AppError(404, 'ORDER_NOT_FOUND', 'Order not found');
+    }
+
+    return toOrder(order);
+  }
 }

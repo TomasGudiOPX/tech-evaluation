@@ -51,6 +51,21 @@ export class OrderRepository {
     });
   }
 
+  async listAll(limit: number): Promise<OrderRow[]> {
+    return this.prisma.order.findMany({
+      include: orderInclude,
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+  }
+
+  async findById(id: string): Promise<OrderRow | null> {
+    return this.prisma.order.findUnique({
+      where: { id },
+      include: orderInclude,
+    });
+  }
+
   async checkout(userId: string, key: string): Promise<OrderRow> {
     try {
       return await this.prisma.$transaction((tx) => this.checkoutInTransaction(tx, userId, key));

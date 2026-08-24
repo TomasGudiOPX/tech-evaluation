@@ -8,5 +8,6 @@ import { OrderService } from './order.service.js';
   imports: [AuthModule],
   controllers: [OrderController],
   providers: [OrderRepository, OrderService],
+  exports: [OrderService],
 })
 export class OrderModule {}

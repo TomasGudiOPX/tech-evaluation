@@ -5,13 +5,24 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { z } from 'zod';
 import { APP_CONFIG } from '../../platform/app-config.token.js';
 import type { AppConfig } from '../../platform/config.js';
+import { ActionService } from '../../modules/actions/action.service.js';
+import { AuthService } from '../../modules/auth/auth.service.js';
+import { CartService } from '../../modules/cart/cart.service.js';
+import { OrderService } from '../../modules/orders/order.service.js';
 import { ProductService } from '../../modules/products/product.service.js';
+import { ReviewService } from '../../modules/reviews/review.service.js';
 import { hasValidBearerToken } from './mcp-auth.js';
+import { registerWorkflowTools } from './mcp.workflow-tools.js';
 
 @Controller()
 export class McpController {
   constructor(
     private readonly products: ProductService,
+    private readonly orders: OrderService,
+    private readonly cart: CartService,
+    private readonly reviews: ReviewService,
+    private readonly auth: AuthService,
+    private readonly actions: ActionService,
     @Inject(APP_CONFIG) private readonly config: AppConfig,
   ) {}
 
@@ -39,6 +50,13 @@ export class McpController {
     try {
       const server = new McpServer({ name: 'shopping-cart', version: '1.0.0' });
       registerProductTools(server, this.products);
+      registerWorkflowTools(server, {
+        orders: this.orders,
+        cart: this.cart,
+        reviews: this.reviews,
+        auth: this.auth,
+        actions: this.actions,
+      });
       const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
       await server.connect(transport);
       await transport.handleRequest(rawReq, rawRes, parsedBody);

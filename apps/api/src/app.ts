@@ -7,6 +7,7 @@ import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fa
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { ActionsModule } from './modules/actions/action.module.js';
 import { CartModule } from './modules/cart/cart.module.js';
 import { OrderModule } from './modules/orders/order.module.js';
 import { ProductModule } from './modules/products/product.module.js';
@@ -30,6 +31,7 @@ class AppModule {
       CartModule,
       OrderModule,
       ReviewsModule,
+      ActionsModule,
     ];
     if (config.mcpApiToken) {
       imports.push(McpModule);
