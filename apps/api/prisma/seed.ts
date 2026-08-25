@@ -15,6 +15,7 @@ type SeedUser = {
 
 type SeedProduct = {
   name: string;
+  sku: string;
   description: string;
   category: ProductCategory;
   priceCents: number;
@@ -32,6 +33,7 @@ const seedUsers: SeedUser[] = [
 const seedProducts: SeedProduct[] = [
   {
     name: 'Minimal Desk Lamp',
+    sku: 'MP-WRK-02',
     description: 'Warm adjustable lamp for focused work sessions.',
     category: 'workspace',
     priceCents: 4599,
@@ -40,6 +42,7 @@ const seedProducts: SeedProduct[] = [
   },
   {
     name: 'Walnut Desk Organizer',
+    sku: 'MP-WRK-01',
     description: 'Compact organizer for pens, notes, cables, and small tools.',
     category: 'workspace',
     priceCents: 3299,
@@ -48,6 +51,7 @@ const seedProducts: SeedProduct[] = [
   },
   {
     name: 'Everyday Canvas Tote',
+    sku: 'MP-BAG-01',
     description: 'Durable cotton tote for groceries, books, and commute gear.',
     category: 'bags',
     priceCents: 2499,
@@ -56,6 +60,7 @@ const seedProducts: SeedProduct[] = [
   },
   {
     name: 'Waxed Utility Backpack',
+    sku: 'MP-BAG-02',
     description: 'Weather-resistant pack with padded laptop storage and brass hardware.',
     category: 'bags',
     priceCents: 7899,
@@ -64,6 +69,7 @@ const seedProducts: SeedProduct[] = [
   },
   {
     name: 'Ceramic Coffee Set',
+    sku: 'MP-KIT-01',
     description: 'Two handmade ceramic cups with a matte glaze finish.',
     category: 'kitchen',
     priceCents: 3899,
@@ -72,6 +78,7 @@ const seedProducts: SeedProduct[] = [
   },
   {
     name: 'Glass Pour-Over Carafe',
+    sku: 'MP-KIT-02',
     description: 'Heat-safe glass carafe with a reusable stainless steel filter.',
     category: 'kitchen',
     priceCents: 4299,
@@ -80,6 +87,7 @@ const seedProducts: SeedProduct[] = [
   },
   {
     name: 'Linen Throw Pillow',
+    sku: 'MP-DEC-01',
     description: 'Soft washed linen pillow with a removable feather insert.',
     category: 'decor',
     priceCents: 3499,
@@ -88,6 +96,7 @@ const seedProducts: SeedProduct[] = [
   },
   {
     name: 'Oak Wall Shelf',
+    sku: 'MP-DEC-02',
     description: 'Floating oak shelf for small books, ceramics, and framed prints.',
     category: 'decor',
     priceCents: 5299,
@@ -96,6 +105,7 @@ const seedProducts: SeedProduct[] = [
   },
   {
     name: 'Aromatherapy Diffuser',
+    sku: 'MP-WEL-02',
     description: 'Quiet ceramic diffuser with timed mist settings for evening routines.',
     category: 'wellness',
     priceCents: 5999,
@@ -104,6 +114,7 @@ const seedProducts: SeedProduct[] = [
   },
   {
     name: 'Cork Yoga Block Pair',
+    sku: 'MP-WEL-01',
     description: 'Dense natural cork support blocks for stretching and recovery.',
     category: 'wellness',
     priceCents: 2799,
@@ -112,6 +123,7 @@ const seedProducts: SeedProduct[] = [
   },
   {
     name: 'Compression Packing Cubes',
+    sku: 'MP-TRV-01',
     description: 'Three-piece packing cube set for organized weekend travel.',
     category: 'travel',
     priceCents: 3199,
@@ -120,6 +132,7 @@ const seedProducts: SeedProduct[] = [
   },
   {
     name: 'Insulated Travel Tumbler',
+    sku: 'MP-TRV-02',
     description: 'Leak-resistant tumbler that keeps drinks hot or cold on long commutes.',
     category: 'travel',
     priceCents: 2999,

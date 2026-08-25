@@ -5,6 +5,7 @@ export const productCategorySchema = z.enum(['workspace', 'bags', 'kitchen', 'de
 export const productSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
+  sku: z.string().nullable(),
   description: z.string(),
   category: productCategorySchema,
   priceCents: z.number().int().positive(),
@@ -17,6 +18,7 @@ export const productSchema = z.object({
 
 export const createProductSchema = z.object({
   name: z.string().trim().min(1).max(120),
+  sku: z.string().trim().min(1).max(64).optional(),
   description: z.string().trim().min(1).max(1000),
   category: productCategorySchema,
   priceCents: z.number().int().positive(),

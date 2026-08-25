@@ -40,6 +40,7 @@ enum ProductCategory {
 model Product {
   id          String   @id @default(uuid()) @db.Uuid
   name        String
+  sku         String?  @unique
   description String
   category    ProductCategory @default(workspace)
   priceCents  Int      @map("price_cents")

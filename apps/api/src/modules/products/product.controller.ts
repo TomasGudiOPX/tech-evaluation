@@ -10,6 +10,7 @@ const productBodySchema = {
   required: ['name', 'description', 'category', 'priceCents', 'imageUrl', 'stock'],
   properties: {
     name: { type: 'string', maxLength: 120 },
+    sku: { type: 'string', maxLength: 64 },
     description: { type: 'string', maxLength: 1000 },
     category: { type: 'string', enum: ['workspace', 'bags', 'kitchen', 'decor', 'wellness', 'travel'] },
     priceCents: { type: 'integer', minimum: 1 },

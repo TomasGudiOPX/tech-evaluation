@@ -12,6 +12,7 @@ function product(id = productId, isActive = true, stock = 5) {
   return {
     id,
     name: 'Minimal Desk Lamp',
+    sku: 'MP-WRK-02',
     description: 'Warm adjustable lamp for focused work sessions.',
     category: 'workspace' as const,
     priceCents: 4599,

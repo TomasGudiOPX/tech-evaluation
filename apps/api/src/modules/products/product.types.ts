@@ -3,6 +3,7 @@ import type { Product, ProductCategory } from '@vps-template/contracts/products'
 export type ProductRow = {
   id: string;
   name: string;
+  sku: string | null;
   description: string;
   category: ProductCategory;
   priceCents: number;

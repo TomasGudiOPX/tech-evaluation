@@ -8,6 +8,7 @@ import type { ProductRow } from './product.types.js';
 const activeProduct: ProductRow = {
   id: '00000000-0000-4000-8000-000000000001',
   name: 'Minimal Desk Lamp',
+  sku: 'MP-WRK-02',
   description: 'Warm adjustable lamp for focused work sessions.',
   category: 'workspace',
   priceCents: 4599,
