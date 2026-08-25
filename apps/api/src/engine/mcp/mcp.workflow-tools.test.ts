@@ -21,7 +21,7 @@ function createServices(): WorkflowToolServices {
     orders: { listOrders: vi.fn(async () => []), getOrder: vi.fn(async () => ({})) },
     cart: { get: vi.fn(async () => ({})) },
     reviews: { listForProduct: vi.fn(async () => []) },
-    auth: { profile: vi.fn(async () => ({ id: userId, email: 'tom@example.com', role: 'customer' })) },
+    auth: { profile: vi.fn(async () => ({ id: userId, email: 'tom@example.com', role: 'customer', externalId: 'tom@example.com' })) },
     actions: {
       propose: vi.fn(async () => ({})),
       list: vi.fn(async () => []),
@@ -124,7 +124,7 @@ describe('registerWorkflowTools', () => {
     const result = await profile.handler({ userId } as never);
 
     expect(result).toEqual({
-      content: [{ type: 'text', text: JSON.stringify({ id: userId, email: 't**@example.com', role: 'customer' }) }],
+      content: [{ type: 'text', text: JSON.stringify({ id: userId, email: 't**@example.com', role: 'customer', externalId: 'tom@example.com' }) }],
     });
   });
 

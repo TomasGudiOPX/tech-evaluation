@@ -117,7 +117,7 @@ export function registerWorkflowTools(server: McpServer, services: WorkflowToolS
     async (args) =>
       run(async () => {
         const profile = await services.auth.profile(args.userId);
-        return { id: profile.id, email: maskEmail(profile.email), role: profile.role };
+        return { id: profile.id, email: maskEmail(profile.email), role: profile.role, externalId: profile.externalId };
       }),
   );
 

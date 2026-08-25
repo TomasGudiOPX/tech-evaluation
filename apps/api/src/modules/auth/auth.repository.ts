@@ -3,12 +3,19 @@ import type { UserRole } from '@vps-template/contracts/auth';
 import { PrismaService } from '../../platform/prisma.service.js';
 import type { StoredUser } from './auth.types.js';
 
-function toStoredUser(user: { id: string; email: string; role: UserRole; passwordHash: string }): StoredUser {
+function toStoredUser(user: {
+  id: string;
+  email: string;
+  role: UserRole;
+  passwordHash: string;
+  externalId: string | null;
+}): StoredUser {
   return {
     id: user.id,
     email: user.email,
     role: user.role,
     passwordHash: user.passwordHash,
+    externalId: user.externalId,
   };
 }
 

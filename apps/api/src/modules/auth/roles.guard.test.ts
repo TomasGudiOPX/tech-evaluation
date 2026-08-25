@@ -30,7 +30,7 @@ describe('RolesGuard', () => {
       guard.canActivate(
         contextFor({
           headers: {},
-          user: { id: 'user-1', email: 'customer@example.com', role: 'customer' },
+          user: { id: 'user-1', email: 'customer@example.com', role: 'customer', externalId: null },
         }) as never,
       ),
     ).toThrow(ForbiddenException);
@@ -43,7 +43,7 @@ describe('RolesGuard', () => {
       guard.canActivate(
         contextFor({
           headers: {},
-          user: { id: 'admin-1', email: 'admin@example.com', role: 'admin' },
+          user: { id: 'admin-1', email: 'admin@example.com', role: 'admin', externalId: null },
         }) as never,
       ),
     ).toBe(true);

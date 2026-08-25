@@ -14,6 +14,7 @@ function toAuthUser(user: StoredUser): AuthUser {
     id: user.id,
     email: user.email,
     role: user.role,
+    externalId: user.externalId,
   };
 }
 

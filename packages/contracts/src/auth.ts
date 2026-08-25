@@ -21,6 +21,7 @@ export type AuthUser = {
   id: string;
   email: string;
   role: UserRole;
+  externalId: string | null;
 };
 
 export type AuthTokenResponse = {

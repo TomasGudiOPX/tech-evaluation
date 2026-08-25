@@ -9,6 +9,7 @@ const prisma = new PrismaClient();
 
 type SeedUser = {
   email: string;
+  externalId: string;
   password: string;
   role: UserRole;
 };
@@ -24,10 +25,10 @@ type SeedProduct = {
 };
 
 const seedUsers: SeedUser[] = [
-  { email: 'admin@example.com', password: 'admin-password', role: 'admin' },
-  { email: 'manager@example.com', password: 'manager-password', role: 'admin' },
-  { email: 'customer@example.com', password: 'correct-password', role: 'customer' },
-  { email: 'shopper@example.com', password: 'shopper-password', role: 'customer' },
+  { email: 'admin@example.com', externalId: 'admin@example.com', password: 'admin-password', role: 'admin' },
+  { email: 'manager@example.com', externalId: 'manager@example.com', password: 'manager-password', role: 'admin' },
+  { email: 'customer@example.com', externalId: 'customer@example.com', password: 'correct-password', role: 'customer' },
+  { email: 'shopper@example.com', externalId: 'shopper@example.com', password: 'shopper-password', role: 'customer' },
 ];
 
 const seedProducts: SeedProduct[] = [
@@ -145,16 +146,16 @@ function configuredAdmin(): SeedUser | null {
   const email = process.env.ADMIN_SEED_EMAIL;
   const password = process.env.ADMIN_SEED_PASSWORD;
 
-  return email && password ? { email, password, role: 'admin' } : null;
+  return email && password ? { email, externalId: email, password, role: 'admin' } : null;
 }
 
-async function seedUser({ email, password, role }: SeedUser) {
+async function seedUser({ email, password, role, externalId }: SeedUser) {
   const passwordHash = await bcrypt.hash(password, 12);
 
   await prisma.user.upsert({
     where: { email: email.toLowerCase() },
-    update: { passwordHash, role },
-    create: { email: email.toLowerCase(), passwordHash, role },
+    update: { passwordHash, role, externalId },
+    create: { email: email.toLowerCase(), passwordHash, role, externalId },
   });
 }
 

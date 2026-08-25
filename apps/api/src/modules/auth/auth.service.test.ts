@@ -12,7 +12,7 @@ function createService(users: StoredUser[] = []) {
     findByEmail: vi.fn(async (email: string) => users.find((user) => user.email === email) ?? null),
     findById: vi.fn(async (id: string) => users.find((user) => user.id === id) ?? null),
     create: vi.fn(async (email: string, passwordHash: string, role: 'customer' | 'admin') => {
-      const user = { id: `${users.length + 1}`, email, passwordHash, role };
+      const user = { id: `${users.length + 1}`, email, passwordHash, role, externalId: null };
       users.push(user);
       return user;
     }),
@@ -75,7 +75,7 @@ describe('AuthService', () => {
 
   it('logs in with valid credentials', async () => {
     const passwordHash = await bcrypt.hash('correct-password', 12);
-    const { service } = createService([{ id: 'user-1', email: 'user@example.com', passwordHash, role: 'customer' }]);
+    const { service } = createService([{ id: 'user-1', email: 'user@example.com', passwordHash, role: 'customer', externalId: null }]);
 
     await expect(
       service.login({
@@ -90,7 +90,7 @@ describe('AuthService', () => {
 
   it('returns the same stable error for unknown email and wrong password', async () => {
     const passwordHash = await bcrypt.hash('correct-password', 12);
-    const { service } = createService([{ id: 'user-1', email: 'user@example.com', passwordHash, role: 'customer' }]);
+    const { service } = createService([{ id: 'user-1', email: 'user@example.com', passwordHash, role: 'customer', externalId: null }]);
 
     await expect(service.login({ email: 'missing@example.com', password: 'wrong' })).rejects.toMatchObject({
       code: 'AUTH_INVALID_CREDENTIALS',
